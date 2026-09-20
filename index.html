@@ -1,0 +1,545 @@
+<title>現古館 語彙ドリル</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --paper:#F7F4EC;
+    --paper-raised:#FFFDF7;
+    --ink:#22201C;
+    --ink-soft:#6E665A;
+    --ink-faint:#A69C8C;
+    --rule:#DED6C6;
+    --shu:#B34026;
+    --shu-soft:#F0E0D8;
+    --ai:#2E4A57;
+    --ai-soft:#DFE8EA;
+    --shadow:0 1px 0 rgba(34,32,28,.04), 0 6px 18px -12px rgba(34,32,28,.35);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#16161A; --paper-raised:#1E1E23; --ink:#EBE5DA; --ink-soft:#A49C90;
+      --ink-faint:#6C6559; --rule:#33323A; --shu:#E27B5E; --shu-soft:#3A2622;
+      --ai:#8FB6C4; --ai-soft:#22323A;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 20px -14px rgba(0,0,0,.8);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#16161A; --paper-raised:#1E1E23; --ink:#EBE5DA; --ink-soft:#A49C90;
+    --ink-faint:#6C6559; --rule:#33323A; --shu:#E27B5E; --shu-soft:#3A2622;
+    --ai:#8FB6C4; --ai-soft:#22323A;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 20px -14px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:560px; margin:0 auto;
+    padding-inline:18px; padding-block:26px 48px;
+    display:flex; flex-direction:column; gap:20px;
+  }
+  .mincho{font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;}
+
+  .masthead{border-bottom:1px solid var(--rule);padding-bottom:12px;}
+  .masthead h1{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-weight:700;
+    font-size:22px;margin:0;letter-spacing:.06em;}
+
+  /* ---- mode toggle ---- */
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule);border-radius:2px;overflow:hidden;}
+  .modes button{
+    appearance:none;font:inherit;cursor:pointer;background:var(--paper-raised);color:var(--ink-soft);
+    border:0;padding:11px 8px;font-size:13.5px;letter-spacing:.04em;
+    transition:background .12s ease,color .12s ease;
+  }
+  .modes button + button{border-left:1px solid var(--rule);}
+  .modes button[aria-selected="true"]{background:var(--shu);color:#FFF8F4;font-weight:700;}
+  :root[data-theme="dark"] .modes button[aria-selected="true"]{color:#1A100D;}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .modes button[aria-selected="true"]{color:#1A100D;}
+  }
+
+  /* ---- home ---- */
+  .setgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  @media (max-width:400px){.setgrid{grid-template-columns:1fr;}}
+  .setcard{
+    appearance:none;text-align:left;cursor:pointer;
+    background:var(--paper-raised);color:inherit;
+    border:1px solid var(--rule);border-radius:3px;
+    padding:12px 14px;display:flex;flex-direction:column;gap:2px;
+    font:inherit;box-shadow:var(--shadow);
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .setcard:hover{border-color:var(--shu);transform:translateY(-1px);}
+  .setcard .no{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;letter-spacing:.04em;}
+  .setcard .range{font-size:11.5px;color:var(--ink-faint);font-variant-numeric:tabular-nums;letter-spacing:.06em;}
+  .setcard .best{font-size:11.5px;color:var(--shu);letter-spacing:.04em;min-height:1.4em;}
+
+  .examcard{
+    appearance:none;text-align:left;cursor:pointer;font:inherit;width:100%;
+    background:var(--paper-raised);color:inherit;
+    border:1px solid var(--rule);border-left:3px solid var(--shu);border-radius:2px;
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;
+    box-shadow:var(--shadow);transition:border-color .15s ease;
+  }
+  .examcard:hover{border-color:var(--shu);}
+  .examcard .t{font-family:"Shippori Mincho",serif;font-size:18px;font-weight:700;letter-spacing:.08em;}
+  .examcard .d{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;}
+  .examcard .r{font-size:12px;color:var(--shu);text-align:right;flex:0 0 auto;}
+
+  /* ---- quiz ---- */
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--ink-soft);}
+  .bar .count{font-variant-numeric:tabular-nums;letter-spacing:.08em;}
+  .track{height:2px;background:var(--rule);border-radius:2px;overflow:hidden;}
+  .track > i{display:block;height:100%;background:var(--shu);width:0;transition:width .25s ease;}
+
+  .prompt{
+    background:var(--paper-raised);border:1px solid var(--rule);border-left:3px solid var(--shu);
+    border-radius:2px;padding:20px;box-shadow:var(--shadow);
+  }
+  .prompt .label{font-size:11px;letter-spacing:.2em;color:var(--ink-faint);margin-bottom:10px;}
+  .prompt .meaning{
+    font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
+    font-size:19px;line-height:1.95;font-weight:500;text-wrap:balance;margin:0;
+  }
+  .prompt .meaning .blank{color:var(--shu);font-weight:700;letter-spacing:.1em;}
+  @media (max-width:400px){.prompt .meaning{font-size:17.5px;}}
+
+  .choices{display:flex;flex-direction:column;gap:8px;}
+  .choice{
+    appearance:none;font:inherit;cursor:pointer;text-align:left;
+    background:var(--paper-raised);color:inherit;
+    border:1px solid var(--rule);border-radius:2px;
+    padding:12px 14px;display:flex;align-items:center;gap:12px;
+    transition:border-color .12s ease,background .12s ease;
+  }
+  .choice:hover:not(:disabled){border-color:var(--ai);}
+  .choice:disabled{cursor:default;}
+  .choice .mark{
+    flex:0 0 auto;width:22px;height:22px;border-radius:50%;
+    border:1px solid var(--rule);display:grid;place-items:center;
+    font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;
+  }
+  .choice .word{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:19px;font-weight:500;letter-spacing:.02em;}
+  .choice.is-right{border-color:var(--shu);background:var(--shu-soft);}
+  .choice.is-right .mark{border-color:var(--shu);color:var(--shu);}
+  .choice.is-wrong{border-color:var(--ai);background:var(--ai-soft);opacity:.85;}
+  .choice.is-dim{opacity:.45;}
+
+  .verdict{border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:6px;}
+  .verdict .head{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;letter-spacing:.1em;}
+  .verdict.ok .head{color:var(--shu);}
+  .verdict.ng .head{color:var(--ai);}
+  .verdict .head .tap{font-family:"Zen Kaku Gothic New",sans-serif;font-size:11px;font-weight:400;
+    letter-spacing:.08em;color:var(--ink-faint);margin-left:10px;}
+  .verdict .gloss{font-size:13.5px;color:var(--ink-soft);}
+  .verdict .gloss b{font-family:"Shippori Mincho",serif;font-weight:700;color:var(--ink);font-size:15px;}
+  .verdict .filled{font-family:"Shippori Mincho",serif;font-size:14.5px;color:var(--ink);line-height:1.85;}
+  .verdict .filled em{font-style:normal;font-weight:700;color:var(--shu);}
+  .countdown{height:2px;background:var(--rule);border-radius:2px;overflow:hidden;margin-top:4px;}
+  .countdown > i{display:block;height:100%;width:100%;background:var(--shu);transform-origin:left center;}
+  .verdict.ng .countdown > i{background:var(--ai);}
+  .countdown.run > i{animation:drain linear forwards;animation-duration:var(--dur,1s);}
+  @keyframes drain{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+
+  /* ---- result ---- */
+  .score{
+    background:var(--paper-raised);border:1px solid var(--rule);border-radius:2px;
+    padding:20px;text-align:center;box-shadow:var(--shadow);
+  }
+  .score.pass{border-color:var(--shu);border-width:2px;}
+  .score .n{font-family:"Shippori Mincho",serif;font-size:40px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums;}
+  .score .n small{font-size:18px;color:var(--ink-faint);font-weight:500;}
+  .score .caption{font-size:12.5px;color:var(--ink-soft);letter-spacing:.06em;}
+  .score .stamp{font-family:"Shippori Mincho",serif;font-size:21px;font-weight:700;letter-spacing:.3em;
+    margin-bottom:4px;}
+  .score .stamp.y{color:var(--shu);}
+  .score .stamp.n{color:var(--ai);}
+  .misslist{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule);}
+  .missrow{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:11px 2px;border-bottom:1px solid var(--rule);align-items:baseline;}
+  .missrow .w{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;}
+  .missrow .y{font-size:11px;color:var(--ink-faint);grid-column:1;}
+  .missrow .m{font-size:13px;color:var(--ink-soft);grid-column:2;grid-row:1 / span 2;}
+  .sectitle{font-size:11px;letter-spacing:.2em;color:var(--ink-faint);}
+
+  .actions{display:flex;flex-wrap:wrap;gap:8px;}
+  .btn{
+    appearance:none;font:inherit;cursor:pointer;
+    border:1px solid var(--rule);background:var(--paper-raised);color:inherit;
+    border-radius:2px;padding:9px 16px;font-size:13.5px;letter-spacing:.04em;
+    transition:border-color .12s ease,color .12s ease;
+  }
+  .btn:hover{border-color:var(--shu);color:var(--shu);}
+  .btn.primary{background:var(--shu);border-color:var(--shu);color:#FFF8F4;}
+  :root[data-theme="dark"] .btn.primary{color:#1A100D;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#1A100D;}}
+  .btn.primary:hover{filter:brightness(1.06);}
+
+  :focus-visible{outline:2px solid var(--ai);outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+  .fade{animation:fade .22s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mincho">現古館 語彙ドリル</h1>
+  </header>
+  <main id="stage"></main>
+</div>
+
+<script>
+const WORDS = [
+ {n:141,w:"主宰",y:"しゅさい",m:"中心に立って物事を取りしきること",s:"この研究会を［　］しているのは、定年後も現場を離れない老教授である。"},
+ {n:142,w:"嚆矢",y:"こうし",m:"物事のはじめ。最初",s:"彼の論文は、この分野における実証研究の［　］とされている。"},
+ {n:143,w:"碩学",y:"せきがく",m:"学識が広く深い人。大学者",s:"三十年にわたり古文書を読み続けた［　］の言葉には、やはり重みがある。"},
+ {n:144,w:"鑑賞",y:"かんしょう",m:"芸術作品を味わい、楽しむこと",s:"美術館では、急ぎ足で見て回るより一点を長く［　］したほうがよい。"},
+ {n:145,w:"享受",y:"きょうじゅ",m:"十分に受け取って味わい楽しむこと",s:"我々が今の便利さを［　］できるのは、先人の苦心のおかげである。"},
+ {n:146,w:"原風景",y:"げんふうけい",m:"心の奥にあって原体験を呼び起こす情景",s:"祖父の家の裏にあった雑木林は、私の［　］として今も残っている。"},
+ {n:147,w:"漂泊",y:"ひょうはく",m:"あてもなくさまよい流れること",s:"定住を捨て、［　］の旅に生きた歌人の心情を読み取りたい。"},
+ {n:148,w:"風雅",y:"ふうが",m:"上品で優美なこと。また、詩歌の道",s:"庭の一隅に苔を置くだけで、そこに［　］な趣が生まれる。"},
+ {n:149,w:"美意識",y:"びいしき",m:"美を感じ取る心のはたらき",s:"余白を恐れないところに、この国の［　］があらわれている。"},
+ {n:150,w:"賞揚",y:"しょうよう",m:"ほめあげること",s:"戦時下では、自己犠牲がしばしば美徳として［　］された。"},
+ {n:151,w:"換言",y:"かんげん",m:"言い換えること",s:"情報が多いほど選べなくなる。［　］すれば、自由は負担にもなる。"},
+ {n:152,w:"レトリック",y:"",m:"修辞。言葉を巧みに用いる技法",s:"政治家の演説は、中身よりも［　］の巧みさで記憶される。"},
+ {n:153,w:"メタファー",y:"",m:"隠喩。「ようだ」などを使わないたとえ",s:"「人生は旅だ」という表現は、旅を用いた［　］である。"},
+ {n:154,w:"ステレオタイプ",y:"",m:"型にはまった見方や表現。紋切り型",s:"「理系の人間は無口だ」という見方は、根拠のない［　］にすぎない。"},
+ {n:155,w:"アナロジー",y:"",m:"類似をもとにした推論。類推",s:"生物の進化と言語の変化を重ねる［　］には、やはり限界もある。"},
+ {n:156,w:"メタ〜",y:"",m:"「超えた」「一段高い次元の」を表す語",s:"自分の考え方そのものを考えることを、［　］認知と呼ぶ。"},
+ {n:157,w:"ジャンル",y:"",m:"分野、種類、部門",s:"落語は話芸という［　］の中でも、とりわけ聞き手を選ばない。"},
+ {n:158,w:"ドキュメンタリー",y:"",m:"事実をそのまま記録・構成した作品",s:"演出を排し、漁師の一年をただ追った［　］が高く評価された。"},
+ {n:159,w:"アンソロジー",y:"",m:"すぐれた詩文を選んで編んだ作品集",s:"昭和の短編小説を集めた［　］を、入門書として勧めたい。"},
+ {n:160,w:"サブカルチャー",y:"",m:"主流の伝統文化に属さない独自の文化",s:"漫画はかつて［　］と見なされたが、今や研究の対象である。"},
+ {n:161,w:"ナンセンス",y:"",m:"意味をなさないこと。ばかばかしいこと",s:"議論の前提が誤っている以上、そこから出た結論は［　］である。"},
+ {n:162,w:"パロディー",y:"",m:"既存の作品や作風をもじった作品",s:"名画の構図をそのまま広告に用いた［　］が話題を呼んだ。"},
+ {n:163,w:"テクスト",y:"",m:"原文、原典。読まれる対象としての文章",s:"作者の意図を離れ、［　］そのものから意味を読み取る立場もある。"},
+ {n:164,w:"コンテクスト",y:"",m:"文脈。前後の関係や背景・状況",s:"同じ「けっこうです」も、［　］によって肯定にも否定にもなる。"},
+ {n:165,w:"オリジナル",y:"",m:"独創的なもの。原作、原型",s:"模写を重ねた末に、ようやく自分の［　］な作風に至った。"},
+ {n:166,w:"パースペクティブ",y:"",m:"遠近法。ものの見方の枠組み",s:"経済だけでなく環境という［　］から、開発の是非を問い直す。"},
+ {n:167,w:"モノローグ",y:"",m:"独白。ひとりごと",s:"舞台の中央に立った主人公が、長い［　］を語り始めた。"},
+ {n:168,w:"プリミティブ",y:"",m:"原始的、素朴。根源的",s:"土偶の造形には、理屈を超えた［　］な力強さがある。"},
+ {n:169,w:"ニュアンス",y:"",m:"わずかな差異。微妙な色合い",s:"「やや」と「少し」では、伝わる［　］が微妙に異なる。"},
+ {n:170,w:"アウラ",y:"",m:"人や物から発せられる独特の雰囲気",s:"複製では決して写し取れない［　］が、実物の絵にはある。"},
+ {n:171,w:"アイロニー",y:"",m:"皮肉、反語、風刺",s:"効率を求めた末に時間を失うとは、なんという［　］であろうか。"},
+ {n:172,w:"クライマックス",y:"",m:"頂点、最高潮",s:"物語の［　］で、対立していた二人がついに向き合う。"},
+ {n:173,w:"ロマンチシズム",y:"",m:"現実を離れ空想や感傷を好む態度",s:"理性偏重への反発から、感情を重んじる［　］が生まれた。"},
+ {n:174,w:"エキゾチシズム",y:"",m:"異国情緒、異国趣味",s:"明治期に西洋人が描いた日本像には、［　］が色濃く漂う。"},
+ {n:175,w:"ニヒリズム",y:"",m:"虚無主義",s:"何をしても意味などないという［　］に、若者は陥りやすい。"},
+ {n:176,w:"アナクロニズム",y:"",m:"時代錯誤。時代遅れの人や物",s:"江戸時代の場面に腕時計が映り込むのは、明らかな［　］である。"},
+ {n:177,w:"デカダンス",y:"",m:"退廃的な傾向",s:"世紀末の芸術には、滅びゆくものを美とする［　］の気分が漂う。"},
+ {n:178,w:"神話",y:"しんわ",m:"根拠もなく絶対と信じられている事柄",s:"経済は成長し続けるという［　］は、すでに崩れている。"},
+ {n:179,w:"偶像",y:"ぐうぞう",m:"崇拝やあこがれの対象となるもの",s:"大衆にとって彼はもはや一人の歌手ではなく、［　］であった。"},
+ {n:180,w:"崇拝",y:"すうはい",m:"あがめうやまうこと",s:"祖先を［　］する習慣は、今も各地の祭りに残っている。"},
+ {n:181,w:"啓示",y:"けいじ",m:"神が真理をあらわし示すこと",s:"長い修行の果てに、彼は［　］を受けたかのように語り始めた。"},
+ {n:182,w:"摂理",y:"せつり",m:"自然界を支配し統べる法則",s:"生き物が老いて死ぬのは、避けがたい自然の［　］である。"},
+ {n:183,w:"彼岸",y:"ひがん",m:"悟りに達した理想の世界",s:"現世の苦しみを離れた［　］を、人々は花の咲く岸に思い描いた。"},
+ {n:184,w:"禁忌",y:"きんき",m:"してはならぬこととして禁じること",s:"その村では、山の頂に立ち入ることが長く［　］とされてきた。"},
+ {n:185,w:"土俗",y:"どぞく",m:"その土地固有の風俗・習慣",s:"都市化の中で、祭礼に残る［　］的な信仰が失われつつある。"},
+ {n:186,w:"無常",y:"むじょう",m:"万物は絶えず変化し、定まらないということ",s:"散る桜を惜しむ心の底には、世の［　］への感覚がある。"},
+ {n:187,w:"帰依",y:"きえ",m:"仏の教えを信じ、その力にすがること",s:"戦乱を逃れた人々は、争いを説かぬ教えに［　］していった。"},
+ {n:188,w:"晴（ハレ）",y:"はれ",m:"晴れがましい時や場。非日常",s:"正月や婚礼は、日常と区別された［　］の日である。"},
+ {n:189,w:"唯物論",y:"ゆいぶつろん",m:"物質こそ根源であり、精神はそれに規定されるとする説",s:"意識も脳という物質の働きにすぎないとする［　］の立場をとる。"},
+ {n:190,w:"弁証法",y:"べんしょうほう",m:"対立や矛盾を乗り越え、より高い総合へ進む思考法",s:"対立する二つの主張を統合して先へ進むのが、［　］的な思考である。"},
+ {n:191,w:"昇華",y:"しょうか",m:"ある状態から、より高度な状態へ高められること",s:"満たされぬ思いを創作へと［　］させた画家は、少なくない。"},
+ {n:192,w:"表象",y:"ひょうしょう",m:"心に思い描かれる具体的な像",s:"「ふるさと」という語が心に呼び起こす［　］は、人ごとに違う。"},
+ {n:193,w:"捨象",y:"しゃしょう",m:"考察の際、本質的でない性質を取り除くこと",s:"地図は土地の細部を［　］することで、はじめて役に立つ。"},
+ {n:194,w:"二元論",y:"にげんろん",m:"世界が対立する二つの原理から成るとする考え",s:"心と体を切り離す［　］では、説明のつかない現象がある。"},
+ {n:195,w:"決定論",y:"けっていろん",m:"あらゆる事象はあらかじめ定まっているとする論",s:"人の性格は遺伝ですべて決まるという［　］には、反論も多い。"},
+ {n:196,w:"因果律",y:"いんがりつ",m:"同じ原因からは必ず同じ結果が生じるという法則",s:"実験が成り立つのは、自然が［　］に従うと信じるからである。"},
+ {n:197,w:"現象学",y:"げんしょうがく",m:"ものと現象の関係から認識の成り立ちを考える方法",s:"見えたままの経験に立ち戻ろうとするのが、［　］の方法である。"},
+ {n:198,w:"記号",y:"きごう",m:"ある文化の中で定まった意味を担うもの",s:"赤信号は「止まれ」を意味する［　］として共有されている。"},
+ {n:199,w:"自我",y:"じが",m:"他と区別された自分自身。自己意識",s:"思春期には、他者との違いを通じて［　］が形づくられる。"},
+ {n:200,w:"間〜",y:"かん〜",m:"〜が相互に関係づけられ、共有されているさま",s:"私とあなたの間で意味が共有される場を、［　］主観性と呼ぶ。"},
+ {n:201,w:"思弁",y:"しべん",m:"経験によらず、理性のみで考えること",s:"観察を欠いた［　］だけでは、自然科学は成り立たない。"},
+ {n:202,w:"命題",y:"めいだい",m:"判断の内容を言語や記号で表したもの",s:"「すべての金属は電気を通す」という［　］を検証する。"},
+ {n:203,w:"前提",y:"ぜんてい",m:"ある事柄が成り立つために必要な条件",s:"議論がかみ合わないのは、互いの［　］が違うからである。"},
+ {n:204,w:"属性",y:"ぞくせい",m:"そのものが本来もつ性質・特徴",s:"「水に溶ける」は、その物質のもつ一つの［　］である。"},
+ {n:205,w:"概念",y:"がいねん",m:"ある事物についての大まかな認識内容",s:"「自由」という［　］は、時代によって中身を変えてきた。"},
+ {n:206,w:"包摂",y:"ほうせつ",m:"一つにまとめて取り込むこと",s:"犬も猫も、「哺乳類」という語のもとに［　］される。"},
+ {n:207,w:"敷衍",y:"ふえん",m:"意味や趣旨を押し広げて詳しく説明すること",s:"結論だけでは伝わらぬゆえ、例を挙げて［　］して説明する。"},
+ {n:208,w:"実存主義",y:"じつぞんしゅぎ",m:"個人としての人間の主体的な存在を重んじる思想",s:"人は自ら選ぶことによって自分になる、とするのが［　］である。"},
+ {n:209,w:"資本主義",y:"しほんしゅぎ",m:"利益を得るため、資本家が労働者を雇い品物を生産する経済体制",s:"利潤の追求を原動力とする［　］は、同時に格差も生み出してきた。"},
+ {n:210,w:"民主主義",y:"みんしゅしゅぎ",m:"人民みずからが権力をもって行う支配",s:"面倒な手続きを踏むことこそ、［　］の強みでもある。"},
+ {n:211,w:"市場主義",y:"しじょうしゅぎ",m:"経済を自由な市場に委ねるのがよいとする考え",s:"規制を減らし競争に委ねよという［　］が、九十年代を覆った。"},
+ {n:212,w:"原理主義",y:"げんりしゅぎ",m:"現状を堕落とみなし、宗教の根本の教えに立ち戻ろうとする考え",s:"教典の字句どおりの実践を求める［　］が、各地で勢いを増している。"},
+ {n:213,w:"合理化",y:"ごうりか",m:"無駄を省いて効率よくすること。また、もっともらしい理屈をつけること",s:"遅刻を渋滞のせいにするのは、都合のよい［　］にすぎない。"},
+ {n:214,w:"両義",y:"りょうぎ",m:"二つの意味をもつこと",s:"「やさしい」は易しいとも優しいとも読める、［　］的な語である。"},
+ {n:215,w:"葛藤",y:"かっとう",m:"争い、もめごと。相反する要求に挟まれた心理状態",s:"進学か就職かで、彼は長いあいだ［　］を抱えていた。"},
+ {n:216,w:"典型的",y:"てんけいてき",m:"同類の中で最もその特徴を表しているさま",s:"朝食を抜き夜更かしを続けるのは、［　］な生活の乱れである。"}
+];
+
+const SETS = [];
+for (let i = 0; i < WORDS.length; i += 10) SETS.push(WORDS.slice(i, i + 10));
+
+const KANSUJI = ["一","二","三","四","五","六","七","八"];
+const STORE_KEY = "genkokan-goi-best-v2";
+const EXAM_N = 20;
+const EXAM_PASS = 18;
+
+const MODES = {
+  meaning: { label:"意味から選ぶ", prompt:"つぎの意味にあたる語は", field:"m" },
+  cloze:   { label:"例文の空所",   prompt:"空所に入る語は",       field:"s" }
+};
+let mode = "meaning";
+
+function loadBest(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+function saveBest(obj){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch(e){}
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function setOfWord(word){
+  return SETS[Math.floor((word.n - WORDS[0].n) / 10)];
+}
+function esc(t){ return t.replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function markBlank(sentence){
+  return esc(sentence).replace("［　］", '<span class="blank">［　　］</span>');
+}
+function fillBlank(sentence, word){
+  return esc(sentence).replace("［　］", "<em>" + esc(word) + "</em>");
+}
+
+const stage = document.getElementById("stage");
+let state = null;
+
+/* ---------------- home ---------------- */
+function renderHome(){
+  clearTimer();
+  state = null;
+  const best = loadBest();
+  const cards = SETS.map((set, i) => {
+    const b = best[mode + "-" + i];
+    return `<button class="setcard" data-set="${i}">
+      <span class="no mincho">第${KANSUJI[i]}集</span>
+      <span class="range">${set[0].n}–${set[set.length-1].n}　全${set.length}問</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${set.length}`}</span>
+    </button>`;
+  }).join("");
+  const eb = best[mode + "-exam"];
+
+  stage.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="modes" role="tablist">
+        <button role="tab" data-mode="meaning" aria-selected="${mode === "meaning"}">${MODES.meaning.label}</button>
+        <button role="tab" data-mode="cloze" aria-selected="${mode === "cloze"}">${MODES.cloze.label}</button>
+      </div>
+      <div class="setgrid">${cards}</div>
+      <button class="examcard" id="exam">
+        <span style="display:flex;flex-direction:column;gap:1px;">
+          <span class="t mincho">通しテスト</span>
+          <span class="d">全${WORDS.length}語から${EXAM_N}問を無作為抽出　${EXAM_PASS}問以上で合格</span>
+        </span>
+        <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb} / ${EXAM_N}`}</span>
+      </button>
+    </div>`;
+
+  stage.querySelectorAll("[data-mode]").forEach(btn => {
+    btn.addEventListener("click", () => { mode = btn.dataset.mode; renderHome(); });
+  });
+  stage.querySelectorAll(".setcard").forEach(btn => {
+    btn.addEventListener("click", () => startSet(Number(btn.dataset.set)));
+  });
+  document.getElementById("exam").addEventListener("click", startExam);
+}
+
+/* ---------------- start ---------------- */
+function newState(extra){
+  clearTimer();
+  return Object.assign({
+    i:0, correct:0, missed:[], answered:false, timer:null, canSkipAt:0
+  }, extra);
+}
+function startSet(setIndex){
+  state = newState({ kind:"set", setIndex, queue: shuffle(SETS[setIndex]) });
+  renderQuestion();
+}
+function startExam(){
+  state = newState({ kind:"exam", queue: shuffle(WORDS).slice(0, EXAM_N) });
+  renderQuestion();
+}
+function startReview(){
+  state = newState({ kind:"review", setIndex: state.setIndex, from: state.kind, queue: shuffle(state.missed) });
+  renderQuestion();
+}
+
+/* ---------------- quiz ---------------- */
+function buildChoices(target){
+  const pool = setOfWord(target).filter(x => x.n !== target.n);
+  return shuffle([target, ...shuffle(pool).slice(0, 3)]);
+}
+
+function headline(){
+  if (state.kind === "exam") return "通しテスト";
+  if (state.kind === "review") return "復習";
+  return `第${KANSUJI[state.setIndex]}集`;
+}
+
+function renderQuestion(){
+  const q = state.queue[state.i];
+  const choices = buildChoices(q);
+  state.answered = false;
+  const total = state.queue.length;
+  const body = mode === "cloze" ? markBlank(q.s) : esc(q.m);
+
+  stage.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="bar">
+        <span>${headline()}</span>
+        <span class="count">${state.i + 1} / ${total}</span>
+      </div>
+      <div class="track"><i style="width:${(state.i / total) * 100}%"></i></div>
+      <div class="prompt">
+        <div class="label">${MODES[mode].prompt}</div>
+        <p class="meaning">${body}</p>
+      </div>
+      <div class="choices">
+        ${choices.map((c, k) => `
+          <button class="choice" data-n="${c.n}" data-k="${k}">
+            <span class="mark">${k + 1}</span>
+            <span class="word">${esc(c.w)}</span>
+          </button>`).join("")}
+      </div>
+      <div id="after"></div>
+    </div>`;
+
+  stage.querySelectorAll(".choice").forEach(btn => {
+    btn.addEventListener("click", () => answer(Number(btn.dataset.n), q));
+  });
+}
+
+function answer(picked, q){
+  if (state.answered) return;
+  state.answered = true;
+  const ok = picked === q.n;
+  if (ok) state.correct++; else state.missed.push(q);
+
+  stage.querySelectorAll(".choice").forEach(btn => {
+    const n = Number(btn.dataset.n);
+    btn.disabled = true;
+    if (n === q.n) btn.classList.add("is-right");
+    else if (n === picked) btn.classList.add("is-wrong");
+    else btn.classList.add("is-dim");
+  });
+
+  const wait = ok ? 1000 : 3000;
+  const yomi = q.y ? `（${q.y}）` : "";
+  const extra = mode === "cloze"
+    ? `<span class="filled">${fillBlank(q.s, q.w)}</span>`
+    : "";
+
+  document.getElementById("after").innerHTML = `
+    <div class="verdict ${ok ? "ok" : "ng"} fade">
+      <span class="head mincho">${ok ? "正解" : "誤答"}<span class="tap">タップで次へ</span></span>
+      ${extra}
+      <span class="gloss"><b>${esc(q.w)}</b>${yomi}　${esc(q.m)}</span>
+      <div class="countdown" style="--dur:${wait}ms"><i></i></div>
+    </div>`;
+
+  const bar = stage.querySelector(".countdown");
+  if (bar) requestAnimationFrame(() => bar.classList.add("run"));
+  state.canSkipAt = Date.now() + 350;
+  state.timer = setTimeout(advance, wait);
+}
+
+function clearTimer(){
+  if (state && state.timer){ clearTimeout(state.timer); state.timer = null; }
+}
+function advance(){
+  clearTimer();
+  if (!state || !state.answered) return;
+  if (state.i === state.queue.length - 1) renderResult();
+  else { state.i++; renderQuestion(); }
+}
+document.addEventListener("click", () => {
+  if (state && state.answered && state.timer && Date.now() >= state.canSkipAt) advance();
+});
+
+/* ---------------- result ---------------- */
+function renderResult(){
+  clearTimer();
+  const total = state.queue.length;
+  const score = state.correct;
+  const isExam = state.kind === "exam";
+  const passed = isExam && score >= EXAM_PASS;
+
+  if (state.kind !== "review"){
+    const key = isExam ? mode + "-exam" : mode + "-" + state.setIndex;
+    const best = loadBest();
+    if (best[key] === undefined || score > best[key]){ best[key] = score; saveBest(best); }
+  }
+
+  let caption;
+  if (isExam) caption = `通しテスト（${MODES[mode].label}）　${EXAM_PASS}問以上で合格`;
+  else if (state.kind === "review") caption = "復習の結果";
+  else caption = `第${KANSUJI[state.setIndex]}集（${SETS[state.setIndex][0].n}–${SETS[state.setIndex][SETS[state.setIndex].length-1].n}）`;
+
+  const stamp = isExam
+    ? `<div class="stamp mincho ${passed ? "y" : "n"}">${passed ? "合格" : "不合格"}</div>`
+    : "";
+
+  const missBlock = state.missed.length ? `
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="sectitle">取りこぼした語</div>
+      <div class="misslist">
+        ${state.missed.map(x => `
+          <div class="missrow">
+            <span class="w mincho">${esc(x.w)}</span>
+            <span class="m">${esc(x.m)}</span>
+            <span class="y">${x.y || "—"}</span>
+          </div>`).join("")}
+      </div>
+    </div>` : `<p class="sectitle">取りこぼしはございません。</p>`;
+
+  const againLabel = isExam ? "もう一度（別の20問）" : "同じ集をもう一度";
+
+  stage.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="score ${passed ? "pass" : ""}">
+        ${stamp}
+        <div class="n mincho">${score}<small> / ${total}</small></div>
+        <div class="caption">${caption}</div>
+      </div>
+      ${missBlock}
+      <div class="actions">
+        ${state.missed.length ? `<button class="btn primary" id="review">間違えた語だけ復習</button>` : ""}
+        <button class="btn" id="again">${againLabel}</button>
+        <button class="btn" id="home">一覧へ戻る</button>
+      </div>
+    </div>`;
+
+  const rv = document.getElementById("review");
+  if (rv) rv.addEventListener("click", startReview);
+  document.getElementById("again").addEventListener("click", () => {
+    if (isExam || state.from === "exam") startExam();
+    else startSet(state.setIndex);
+  });
+  document.getElementById("home").addEventListener("click", renderHome);
+}
+
+/* ---------------- keyboard ---------------- */
+document.addEventListener("keydown", e => {
+  if (!state) return;
+  if (!state.answered && ["1","2","3","4"].includes(e.key)){
+    const btn = stage.querySelector(`.choice[data-k="${Number(e.key) - 1}"]`);
+    if (btn) { e.preventDefault(); btn.click(); }
+  } else if (state.answered && state.timer && (e.key === "Enter" || e.key === " ")){
+    e.preventDefault();
+    advance();
+  }
+});
+
+renderHome();
+</script>
