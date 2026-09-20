@@ -4,24 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F7F4EC">
-<meta name="description" content="現古館 語彙ドリル｜評論重要語141〜216の四択演習">
+<meta name="description" content="アプリde現古館｜広島国語屋本舗 現古館の演習アプリ">
 </head>
 <body>
-<title>現古館 語彙ドリル</title>
+<title>アプリde現古館</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
   :root{
-    --paper:#F7F4EC;
-    --paper-raised:#FFFDF7;
-    --ink:#22201C;
-    --ink-soft:#6E665A;
-    --ink-faint:#A69C8C;
-    --rule:#DED6C6;
-    --shu:#B34026;
-    --shu-soft:#F0E0D8;
-    --ai:#2E4A57;
-    --ai-soft:#DFE8EA;
+    --paper:#F7F4EC; --paper-raised:#FFFDF7; --ink:#22201C; --ink-soft:#6E665A;
+    --ink-faint:#A69C8C; --rule:#DED6C6; --shu:#B34026; --shu-soft:#F0E0D8;
+    --ai:#2E4A57; --ai-soft:#DFE8EA;
     --shadow:0 1px 0 rgba(34,32,28,.04), 0 6px 18px -12px rgba(34,32,28,.35);
     color-scheme:light;
   }
@@ -42,166 +35,215 @@
     color-scheme:dark;
   }
 
+  *{box-sizing:border-box;}
   body{
-    background:var(--paper); color:var(--ink);
+    background:var(--paper); color:var(--ink); margin:0;
     font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
-    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+    font-size:16px; line-height:1.75; -webkit-text-size-adjust:100%; -webkit-font-smoothing:antialiased;
   }
   .wrap{
-    max-width:560px; margin:0 auto;
-    padding-inline:18px; padding-block:26px 48px;
+    max-width:620px; margin:0 auto;
+    padding-inline:16px;
+    padding-block:calc(22px + env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px));
     display:flex; flex-direction:column; gap:20px;
   }
   .mincho{font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;}
 
-  .masthead{border-bottom:1px solid var(--rule);padding-bottom:12px;}
-  .masthead h1{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-weight:700;
-    font-size:22px;margin:0;letter-spacing:.06em;}
+  .masthead{border-bottom:1px solid var(--rule); padding-bottom:12px;
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
+  .masthead h1{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
+    font-weight:700; font-size:25px; margin:0; letter-spacing:.06em;}
+  .masthead .crumb{font-size:12px; color:var(--ink-faint); letter-spacing:.1em; white-space:nowrap;}
 
-  /* ---- mode toggle ---- */
-  .modes{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule);border-radius:2px;overflow:hidden;}
-  .modes button{
-    appearance:none;font:inherit;cursor:pointer;background:var(--paper-raised);color:var(--ink-soft);
-    border:0;padding:11px 8px;font-size:13.5px;letter-spacing:.04em;
-    transition:background .12s ease,color .12s ease;
+  /* ---- 大扉 ---- */
+  .gates{display:flex; flex-direction:column; gap:12px;}
+  .gate{
+    appearance:none; font:inherit; cursor:pointer; text-align:left; width:100%;
+    background:var(--paper-raised); color:inherit;
+    border:1px solid var(--rule); border-left:3px solid var(--shu); border-radius:2px;
+    padding:20px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:4px;
+    transition:border-color .15s ease, transform .15s ease;
   }
+  .gate:hover{border-color:var(--shu); transform:translateY(-1px);}
+  .gate .t{font-family:"Shippori Mincho",serif; font-size:23px; font-weight:700; letter-spacing:.1em;}
+  .gate .d{font-size:13px; color:var(--ink-soft);}
+  .gate .n{font-size:11.5px; color:var(--ink-faint); letter-spacing:.06em;}
+
+  /* ---- 一覧 ---- */
+  .modes{display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--rule); border-radius:2px; overflow:hidden;}
+  .modes button{appearance:none; font:inherit; cursor:pointer; background:var(--paper-raised);
+    color:var(--ink-soft); border:0; padding:14px 8px; font-size:15px; letter-spacing:.04em;}
   .modes button + button{border-left:1px solid var(--rule);}
-  .modes button[aria-selected="true"]{background:var(--shu);color:#FFF8F4;font-weight:700;}
+  .modes button[aria-selected="true"]{background:var(--shu); color:#FFF8F4; font-weight:700;}
   :root[data-theme="dark"] .modes button[aria-selected="true"]{color:#1A100D;}
   @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]) .modes button[aria-selected="true"]{color:#1A100D;}
   }
 
-  /* ---- home ---- */
-  .setgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-  @media (max-width:400px){.setgrid{grid-template-columns:1fr;}}
+  .setgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  @media (max-width:430px){.setgrid{grid-template-columns:1fr;}}
   .setcard{
-    appearance:none;text-align:left;cursor:pointer;
-    background:var(--paper-raised);color:inherit;
-    border:1px solid var(--rule);border-radius:3px;
-    padding:12px 14px;display:flex;flex-direction:column;gap:2px;
-    font:inherit;box-shadow:var(--shadow);
+    appearance:none; text-align:left; cursor:pointer; font:inherit;
+    background:var(--paper-raised); color:inherit;
+    border:1px solid var(--rule); border-radius:3px; padding:15px 16px;
+    display:flex; flex-direction:column; gap:2px; box-shadow:var(--shadow);
     transition:border-color .15s ease, transform .15s ease;
   }
-  .setcard:hover{border-color:var(--shu);transform:translateY(-1px);}
-  .setcard .no{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;letter-spacing:.04em;}
-  .setcard .range{font-size:11.5px;color:var(--ink-faint);font-variant-numeric:tabular-nums;letter-spacing:.06em;}
-  .setcard .best{font-size:11.5px;color:var(--shu);letter-spacing:.04em;min-height:1.4em;}
+  .setcard:hover{border-color:var(--shu); transform:translateY(-1px);}
+  .setcard .no{font-family:"Shippori Mincho",serif; font-size:19px; font-weight:700; letter-spacing:.06em;}
+  .setcard .range{font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; letter-spacing:.06em;}
+  .setcard .best{font-size:12.5px; color:var(--shu); min-height:1.4em;}
 
   .examcard{
-    appearance:none;text-align:left;cursor:pointer;font:inherit;width:100%;
-    background:var(--paper-raised);color:inherit;
-    border:1px solid var(--rule);border-left:3px solid var(--shu);border-radius:2px;
-    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;
-    box-shadow:var(--shadow);transition:border-color .15s ease;
+    appearance:none; text-align:left; cursor:pointer; font:inherit; width:100%;
+    background:var(--paper-raised); color:inherit;
+    border:1px solid var(--rule); border-left:3px solid var(--shu); border-radius:2px;
+    padding:16px; display:flex; justify-content:space-between; align-items:center; gap:14px;
+    box-shadow:var(--shadow);
   }
   .examcard:hover{border-color:var(--shu);}
-  .examcard .t{font-family:"Shippori Mincho",serif;font-size:18px;font-weight:700;letter-spacing:.08em;}
-  .examcard .d{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;}
-  .examcard .r{font-size:12px;color:var(--shu);text-align:right;flex:0 0 auto;}
+  .examcard .t{font-family:"Shippori Mincho",serif; font-size:19px; font-weight:700; letter-spacing:.08em;}
+  .examcard .d{font-size:12.5px; color:var(--ink-faint);}
+  .examcard .r{font-size:12.5px; color:var(--shu); text-align:right; flex:0 0 auto;}
 
-  /* ---- quiz ---- */
-  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--ink-soft);}
-  .bar .count{font-variant-numeric:tabular-nums;letter-spacing:.08em;}
-  .track{height:2px;background:var(--rule);border-radius:2px;overflow:hidden;}
-  .track > i{display:block;height:100%;background:var(--shu);width:0;transition:width .25s ease;}
+  /* ---- 出題 ---- */
+  .bar{display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12.5px; color:var(--ink-soft);}
+  .bar .count{font-variant-numeric:tabular-nums; letter-spacing:.08em;}
+  .track{height:2px; background:var(--rule); border-radius:2px; overflow:hidden;}
+  .track > i{display:block; height:100%; background:var(--shu); transition:width .25s ease;}
 
   .prompt{
-    background:var(--paper-raised);border:1px solid var(--rule);border-left:3px solid var(--shu);
-    border-radius:2px;padding:20px;box-shadow:var(--shadow);
+    background:var(--paper-raised); border:1px solid var(--rule); border-left:3px solid var(--shu);
+    border-radius:2px; padding:22px 18px; box-shadow:var(--shadow);
   }
-  .prompt .label{font-size:11px;letter-spacing:.2em;color:var(--ink-faint);margin-bottom:10px;}
-  .prompt .meaning{
+  .prompt .label{font-size:12px; letter-spacing:.18em; color:var(--ink-faint); margin-bottom:10px;}
+  .prompt .body{
     font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
-    font-size:19px;line-height:1.95;font-weight:500;text-wrap:balance;margin:0;
+    font-size:21px; line-height:1.95; font-weight:500; margin:0; text-wrap:balance;
   }
-  .prompt .meaning .blank{color:var(--shu);font-weight:700;letter-spacing:.1em;}
-  @media (max-width:400px){.prompt .meaning{font-size:17.5px;}}
+  .prompt .body .hl{color:var(--shu); font-weight:700; border-bottom:2px solid var(--shu); padding-bottom:1px;}
+  .prompt .body .jo{background:var(--shu-soft); border-bottom:2px solid var(--shu); padding:1px 2px;}
+  .prompt .sub{font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.7;}
+  .prompt .sub b{font-family:"Shippori Mincho",serif; font-size:16px; color:var(--ink);}
 
-  .choices{display:flex;flex-direction:column;gap:8px;}
+  /* 句切れ：和歌＋切れ目 */
+  .waka{font-family:"Shippori Mincho",serif; font-size:20px; line-height:2.3;
+    display:flex; flex-wrap:wrap; align-items:center; margin:0;}
+  .waka .ku{padding:0 1px;}
+  .gap{
+    appearance:none; font:inherit; cursor:pointer; background:transparent; color:var(--ink-faint);
+    border:0; border-bottom:1px dotted var(--ink-faint);
+    min-width:30px; height:34px; margin:0 2px; padding:0;
+    font-size:19px; line-height:1; border-radius:2px;
+  }
+  .gap:hover{background:var(--shu-soft);}
+  .gap.on{color:var(--shu); border-bottom:0; font-weight:700; background:var(--shu-soft);}
+  .gap.ansmark{color:var(--shu); font-weight:700; border-bottom:0;}
+  .gap:disabled{cursor:default;}
+
+  .choices{display:flex; flex-direction:column; gap:8px;}
   .choice{
-    appearance:none;font:inherit;cursor:pointer;text-align:left;
-    background:var(--paper-raised);color:inherit;
-    border:1px solid var(--rule);border-radius:2px;
-    padding:12px 14px;display:flex;align-items:center;gap:12px;
-    transition:border-color .12s ease,background .12s ease;
+    appearance:none; font:inherit; cursor:pointer; text-align:left;
+    background:var(--paper-raised); color:inherit;
+    border:1px solid var(--rule); border-radius:2px;
+    padding:15px 16px; min-height:58px; display:flex; align-items:center; gap:12px;
+    transition:border-color .12s ease, background .12s ease;
   }
   .choice:hover:not(:disabled){border-color:var(--ai);}
   .choice:disabled{cursor:default;}
-  .choice .mark{
-    flex:0 0 auto;width:22px;height:22px;border-radius:50%;
-    border:1px solid var(--rule);display:grid;place-items:center;
-    font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;
-  }
-  .choice .word{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:19px;font-weight:500;letter-spacing:.02em;}
-  .choice.is-right{border-color:var(--shu);background:var(--shu-soft);}
-  .choice.is-right .mark{border-color:var(--shu);color:var(--shu);}
-  .choice.is-wrong{border-color:var(--ai);background:var(--ai-soft);opacity:.85;}
+  .choice .mark{flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    border:1px solid var(--rule); display:grid; place-items:center;
+    font-size:13px; color:var(--ink-faint); font-variant-numeric:tabular-nums;}
+  .choice .word{font-family:"Shippori Mincho",serif; font-size:21px; font-weight:500; letter-spacing:.02em;}
+  .choice .word small{font-family:"Zen Kaku Gothic New",sans-serif; font-size:13px; color:var(--ink-soft); margin-left:8px;}
+  .choice.is-right{border-color:var(--shu); background:var(--shu-soft);}
+  .choice.is-right .mark{border-color:var(--shu); color:var(--shu);}
+  .choice.is-wrong{border-color:var(--ai); background:var(--ai-soft); opacity:.85;}
   .choice.is-dim{opacity:.45;}
 
-  .verdict{border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:6px;}
-  .verdict .head{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;letter-spacing:.1em;}
+  /* 縁語：語札 */
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    appearance:none; font:inherit; cursor:pointer;
+    font-family:"Shippori Mincho",serif; font-size:19px;
+    background:var(--paper-raised); color:inherit;
+    border:1px solid var(--rule); border-radius:2px; padding:10px 14px; min-height:48px;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .chip:hover:not(:disabled){border-color:var(--ai);}
+  .chip.on{border-color:var(--ai); background:var(--ai-soft); font-weight:700;}
+  .chip.right{border-color:var(--shu); background:var(--shu-soft); color:var(--shu); font-weight:700;}
+  .chip.miss{border-color:var(--shu); border-style:dashed; color:var(--shu);}
+  .chip.bad{border-color:var(--ai); background:var(--ai-soft); text-decoration:line-through; opacity:.7;}
+  .chip:disabled{cursor:default;}
+
+  .verdict{border-top:1px solid var(--rule); padding-top:14px; display:flex; flex-direction:column; gap:6px;}
+  .verdict .head{font-family:"Shippori Mincho",serif; font-size:18px; font-weight:700; letter-spacing:.1em;}
   .verdict.ok .head{color:var(--shu);}
   .verdict.ng .head{color:var(--ai);}
-  .verdict .head .tap{font-family:"Zen Kaku Gothic New",sans-serif;font-size:11px;font-weight:400;
-    letter-spacing:.08em;color:var(--ink-faint);margin-left:10px;}
-  .verdict .gloss{font-size:13.5px;color:var(--ink-soft);}
-  .verdict .gloss b{font-family:"Shippori Mincho",serif;font-weight:700;color:var(--ink);font-size:15px;}
-  .verdict .filled{font-family:"Shippori Mincho",serif;font-size:14.5px;color:var(--ink);line-height:1.85;}
-  .verdict .filled em{font-style:normal;font-weight:700;color:var(--shu);}
-  .countdown{height:2px;background:var(--rule);border-radius:2px;overflow:hidden;margin-top:4px;}
-  .countdown > i{display:block;height:100%;width:100%;background:var(--shu);transform-origin:left center;}
+  .verdict .head .tap{font-family:"Zen Kaku Gothic New",sans-serif; font-size:11.5px; font-weight:400;
+    letter-spacing:.08em; color:var(--ink-faint); margin-left:10px;}
+  .verdict .gloss{font-size:14.5px; color:var(--ink-soft);}
+  .verdict .gloss b{font-family:"Shippori Mincho",serif; font-weight:700; color:var(--ink); font-size:16px;}
+  .verdict .filled{font-family:"Shippori Mincho",serif; font-size:16px; color:var(--ink); line-height:1.9;}
+  .verdict .filled em{font-style:normal; font-weight:700; color:var(--shu);}
+  .verdict .note{font-size:12.5px; color:var(--ink-faint); line-height:1.7;}
+  .countdown{height:2px; background:var(--rule); border-radius:2px; overflow:hidden; margin-top:4px;}
+  .countdown > i{display:block; height:100%; width:100%; background:var(--shu); transform-origin:left center;}
   .verdict.ng .countdown > i{background:var(--ai);}
-  .countdown.run > i{animation:drain linear forwards;animation-duration:var(--dur,1s);}
-  @keyframes drain{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+  .countdown.run > i{animation:drain linear forwards; animation-duration:var(--dur,1s);}
+  @keyframes drain{from{transform:scaleX(1);} to{transform:scaleX(0);}}
 
-  /* ---- result ---- */
-  .score{
-    background:var(--paper-raised);border:1px solid var(--rule);border-radius:2px;
-    padding:20px;text-align:center;box-shadow:var(--shadow);
-  }
-  .score.pass{border-color:var(--shu);border-width:2px;}
-  .score .n{font-family:"Shippori Mincho",serif;font-size:40px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums;}
-  .score .n small{font-size:18px;color:var(--ink-faint);font-weight:500;}
-  .score .caption{font-size:12.5px;color:var(--ink-soft);letter-spacing:.06em;}
-  .score .stamp{font-family:"Shippori Mincho",serif;font-size:21px;font-weight:700;letter-spacing:.3em;
-    margin-bottom:4px;}
-  .score .stamp.y{color:var(--shu);}
-  .score .stamp.n{color:var(--ai);}
-  .misslist{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule);}
-  .missrow{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:11px 2px;border-bottom:1px solid var(--rule);align-items:baseline;}
-  .missrow .w{font-family:"Shippori Mincho",serif;font-size:17px;font-weight:700;}
-  .missrow .y{font-size:11px;color:var(--ink-faint);grid-column:1;}
-  .missrow .m{font-size:13px;color:var(--ink-soft);grid-column:2;grid-row:1 / span 2;}
-  .sectitle{font-size:11px;letter-spacing:.2em;color:var(--ink-faint);}
+  /* ---- 結果 ---- */
+  .score{background:var(--paper-raised); border:1px solid var(--rule); border-radius:2px;
+    padding:20px; text-align:center; box-shadow:var(--shadow);}
+  .score.pass{border-color:var(--shu); border-width:2px;}
+  .score .stamp{font-family:"Shippori Mincho",serif; font-size:22px; font-weight:700; letter-spacing:.3em; margin-bottom:4px;}
+  .score .stamp.y{color:var(--shu);} .score .stamp.n{color:var(--ai);}
+  .score .n{font-family:"Shippori Mincho",serif; font-size:44px; font-weight:700; line-height:1.2; font-variant-numeric:tabular-nums;}
+  .score .n small{font-size:18px; color:var(--ink-faint); font-weight:500;}
+  .score .caption{font-size:12.5px; color:var(--ink-soft); letter-spacing:.06em;}
+  .sectitle{font-size:11.5px; letter-spacing:.2em; color:var(--ink-faint);}
+  .misslist{display:flex; flex-direction:column; border-top:1px solid var(--rule);}
+  .missrow{padding:11px 2px; border-bottom:1px solid var(--rule); display:flex; flex-direction:column; gap:2px;}
+  .missrow .w{font-family:"Shippori Mincho",serif; font-size:18px; font-weight:700;}
+  .missrow .m{font-size:13.5px; color:var(--ink-soft);}
 
-  .actions{display:flex;flex-wrap:wrap;gap:8px;}
-  .btn{
-    appearance:none;font:inherit;cursor:pointer;
-    border:1px solid var(--rule);background:var(--paper-raised);color:inherit;
-    border-radius:2px;padding:9px 16px;font-size:13.5px;letter-spacing:.04em;
-    transition:border-color .12s ease,color .12s ease;
-  }
-  .btn:hover{border-color:var(--shu);color:var(--shu);}
-  .btn.primary{background:var(--shu);border-color:var(--shu);color:#FFF8F4;}
+  .actions{display:flex; flex-wrap:wrap; gap:8px;}
+  .btn{appearance:none; font:inherit; cursor:pointer; border:1px solid var(--rule);
+    background:var(--paper-raised); color:inherit; border-radius:2px;
+    padding:12px 18px; font-size:15px; letter-spacing:.04em;
+    transition:border-color .12s ease, color .12s ease;}
+  .btn:hover{border-color:var(--shu); color:var(--shu);}
+  .btn.primary{background:var(--shu); border-color:var(--shu); color:#FFF8F4;}
   :root[data-theme="dark"] .btn.primary{color:#1A100D;}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#1A100D;}}
-  .btn.primary:hover{filter:brightness(1.06);}
+  .btn.primary:hover{filter:brightness(1.06); color:#FFF8F4;}
+  :root[data-theme="dark"] .btn.primary:hover{color:#1A100D;}
+  .btn:disabled{opacity:.4; cursor:default;}
 
-  :focus-visible{outline:2px solid var(--ai);outline-offset:2px;}
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+  :focus-visible{outline:2px solid var(--ai); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important;}}
   .fade{animation:fade .22s ease;}
-  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:none;}}
+  @media (min-width:700px){
+    body{font-size:15px;}
+    .prompt .body{font-size:20px;}
+    .choice .word{font-size:20px;}
+  }
 </style>
 
 <div class="wrap">
   <header class="masthead">
-    <h1 class="mincho">現古館 語彙ドリル</h1>
+    <h1 class="mincho">アプリde現古館</h1>
+    <span class="crumb" id="crumb"></span>
   </header>
   <main id="stage"></main>
 </div>
 
 <script>
+/* ==================== 語彙 ==================== */
 const WORDS = [
  {n:141,w:"主宰",y:"しゅさい",m:"中心に立って物事を取りしきること",s:"この研究会を［　］しているのは、定年後も現場を離れない老教授である。"},
  {n:142,w:"嚆矢",y:"こうし",m:"物事のはじめ。最初",s:"彼の論文は、この分野における実証研究の［　］とされている。"},
@@ -280,192 +322,540 @@ const WORDS = [
  {n:215,w:"葛藤",y:"かっとう",m:"争い、もめごと。相反する要求に挟まれた心理状態",s:"進学か就職かで、彼は長いあいだ［　］を抱えていた。"},
  {n:216,w:"典型的",y:"てんけいてき",m:"同類の中で最もその特徴を表しているさま",s:"朝食を抜き夜更かしを続けるのは、［　］な生活の乱れである。"}
 ];
-
 const SETS = [];
 for (let i = 0; i < WORDS.length; i += 10) SETS.push(WORDS.slice(i, i + 10));
 
+/* ==================== 和歌の修辞法 ==================== */
+/* 句切れ：k=五句、at=切れ目（0:初句 1:二句 2:三句 3:四句）、m=根拠記号 */
+const KUGIRE = [
+ {k:["春過ぎて","夏来にけらし","白妙の","衣ほすてふ","天の香具山"],at:1,m:"ア",w:"「けらし」＝終止形"},
+ {k:["わが庵は","都のたつみ","しかぞすむ","世をうぢ山と","人はいふなり"],at:2,m:"イ",w:"「ぞ」—「すむ」（連体形）"},
+ {k:["花の色は","移りにけりな","いたづらに","わが身世にふる","ながめせしまに"],at:1,m:"ウ",w:"詠嘆の終助詞「な」"},
+ {k:["天つ風","雲の通ひ路","吹きとぢよ","をとめの姿","しばしとどめむ"],at:2,m:"ア",w:"「とぢよ」＝命令形"},
+ {k:["わたの原","八十島かけて","漕ぎ出でぬと","人には告げよ","海人の釣舟"],at:3,m:"ア",w:"「告げよ」＝命令形"},
+ {k:["ちはやぶる","神代も聞かず","竜田川","からくれなゐに","水くくるとは"],at:1,m:"ア",w:"「ず」＝終止形"},
+ {k:["わびぬれば","今はた同じ","難波なる","みをつくしても","逢はむとぞ思ふ"],at:1,m:"ア",w:"「同じ」＝終止形"},
+ {k:["月見れば","ちぢに物こそ","悲しけれ","わが身ひとつの","秋にはあらねど"],at:2,m:"イ",w:"「こそ」—「悲しけれ」（已然形）"},
+ {k:["このたびは","幣も取りあへず","手向山","紅葉の錦","神のまにまに"],at:1,m:"ア",w:"「ず」＝終止形"},
+ {k:["山里は","冬ぞさびしさ","まさりける","人目も草も","かれぬと思へば"],at:2,m:"イ",w:"「ぞ」—「ける」（連体形）"},
+ {k:["心あてに","折らばや折らむ","初霜の","置きまどはせる","白菊の花"],at:1,m:"イ",w:"「や」—「折らむ」（連体形）"},
+ {k:["誰をかも","知る人にせむ","高砂の","松も昔の","友ならなくに"],at:1,m:"イ",w:"「か」—「せむ」（連体形）"},
+ {k:["人はいさ","心も知らず","ふるさとは","花ぞ昔の","香ににほひける"],at:1,m:"ア",w:"「ず」＝終止形"},
+ {k:["忘らるる","身をば思はず","誓ひてし","人の命の","惜しくもあるかな"],at:1,m:"ア",w:"「ず」＝終止形"},
+ {k:["しのぶれど","色に出でにけり","わが恋は","ものや思ふと","人の問ふまで"],at:1,m:"ア",w:"「けり」＝終止形"},
+ {k:["恋すてふ","わが名はまだき","立ちにけり","人知れずこそ","思ひそめしか"],at:2,m:"ア",w:"「けり」＝終止形"},
+ {k:["契りきな","かたみに袖を","しぼりつつ","末の松山","波越さじとは"],at:0,m:"ウ",w:"詠嘆の終助詞「な」"},
+ {k:["大江山","いく野の道の","遠ければ","まだふみも見ず","天の橋立"],at:3,m:"ア",w:"「ず」＝終止形"},
+ {k:["もろともに","あはれと思へ","山桜","花よりほかに","知る人もなし"],at:1,m:"ア",w:"「思へ」＝命令形"},
+ {k:["高砂の","尾の上の桜","咲きにけり","外山の霞","立たずもあらなむ"],at:2,m:"ア",w:"「けり」＝終止形"}
+];
+const KUGIRE_NAME = ["初句切れ","二句切れ","三句切れ","四句切れ"];
+const KUGIRE_WHY = [
+ {m:"ア", t:"終止形・命令形"},
+ {m:"イ", t:"係り結び"},
+ {m:"ウ", t:"終助詞"}
+];
+
+/* 掛詞：p=和歌（【】が掛詞）、a/b=掛けられた二つの意味 */
+const KAKE = [
+ {p:"わが庵は都のたつみしかぞ住む世を【うぢ】山と人はいふなり",k:"うぢ",a:"宇治",b:"憂し"},
+ {p:"花の色はうつりにけりないたづらにわが身世に【ふる】ながめせしまに",k:"ふる",a:"降る",b:"経る"},
+ {p:"花の色はうつりにけりないたづらにわが身世にふる【ながめ】せしまに",k:"ながめ",a:"長雨",b:"眺め"},
+ {p:"これやこの行くも帰るも別れては知るも知らぬも【あふ坂】の関",k:"あふ坂",a:"逢坂",b:"逢ふ"},
+ {p:"みちのくのしのぶもぢずり誰ゆゑに乱れ【そめ】にしわれならなくに",k:"そめ",a:"初め",b:"染め"},
+ {p:"立ち別れ【いなば】の山の峰に生ふるまつとし聞かば今帰り来む",k:"いなば",a:"因幡",b:"往なば"},
+ {p:"立ち別れいなばの山の峰に生ふる【まつ】とし聞かば今帰り来む",k:"まつ",a:"松",b:"待つ"},
+ {p:"わびぬれば今はた同じ難波なる【みをつくし】ても逢はむとぞ思ふ",k:"みをつくし",a:"澪標",b:"身を尽くし"},
+ {p:"吹くからに秋の草木のしをるればむべ山風を【あらし】といふらむ",k:"あらし",a:"嵐",b:"荒らし"},
+ {p:"この【たび】は幣も取りあへず手向山紅葉の錦神のまにまに",k:"たび",a:"旅",b:"度"},
+ {p:"このたびは幣も取りあへず【手向山】紅葉の錦神のまにまに",k:"手向山",a:"手向山",b:"手向く"},
+ {p:"名にし負はば【あふ坂】山のさねかづら人に知られでくるよしもがな",k:"あふ坂",a:"逢坂",b:"逢ふ"},
+ {p:"名にし負はばあふ坂山のさねかづら人に知られで【くる】よしもがな",k:"くる",a:"来る",b:"繰る"},
+ {p:"みかの原【わきて】流るるいづみ川いつ見きとてか恋しかるらむ",k:"わきて",a:"湧きて",b:"分きて"},
+ {p:"みかの原わきて流るる【いづみ】川いつ見きとてか恋しかるらむ",k:"いづみ",a:"泉川",b:"いつ見"},
+ {p:"山里は冬ぞ寂しさまさりける人目も草も【かれ】ぬと思へば",k:"かれ",a:"枯れ",b:"離れ"},
+ {p:"かくとだにえやは【いぶき】のさしも草さしも知らじな燃ゆる思ひを",k:"いぶき",a:"伊吹",b:"言ふ"},
+ {p:"かくとだにえやはいぶきのさしも草さしも知らじな燃ゆる【思ひ】を",k:"思ひ",a:"思ひ",b:"火"},
+ {p:"大江山【いく野】の道の遠ければまだふみもみず天の橋立",k:"いく野",a:"生野",b:"行く"},
+ {p:"大江山いく野の道の遠ければまだ【ふみ】もみず天の橋立",k:"ふみ",a:"文",b:"踏み"},
+ {p:"夜をこめて鳥のそら音ははかるともよに【あふ坂】の関はゆるさじ",k:"あふ坂",a:"逢坂",b:"逢ふ"},
+ {p:"春の夜の夢ばかりなる手枕に【かひな】く立たむ名こそ惜しけれ",k:"かひな",a:"甲斐なし",b:"腕"}
+];
+
+/* 枕詞：p=和歌（【】が枕詞）、ans=導いている語、d=同じ歌からの誤答 */
+const MAKURA = [
+ {p:"【あしひきの】山鳥の尾のしだり尾のながながし夜をひとりかも寝む",ans:"山鳥",d:["しだり尾","ながながし夜","ひとり"],
+  note:"枕詞「あしひきの」が本来導く語は「山」であるため、「山」も可とする。"},
+ {p:"【ちはやぶる】神代も聞かず竜田川からくれなゐに水くくるとは",ans:"神代",d:["竜田川","からくれなゐ","水"]},
+ {p:"【ひさかたの】光のどけき春の日にしづ心なく花の散るらむ",ans:"光",d:["春の日","しづ心","花"]}
+];
+
+/* 序詞：p=和歌（【】が序詞）、ans=導いている語、m=判断基準 */
+const JO = [
+ {p:"【あしひきの山鳥の尾のしだり尾の】ながながし夜をひとりかも寝む",ans:"ながながし",d:["山鳥","しだり尾","ひとり"],
+  m:"ウ",w:"垂れ下がった山鳥の尾の長さを、長い夜にたとえている。"},
+ {p:"立ち別れ【いなばの山の峰に生ふる】まつとし聞かば今帰り来む",ans:"まつ",d:["山","峰","帰り来む"],
+  m:"イ",w:"「松」と「待つ」の掛詞で下句へつなぐ。",note:"「立ち別れ」から序詞に含める説もある。"},
+ {p:"【住の江の岸による波】よるさへや夢の通ひ路人めよくらむ",ans:"よる",d:["波","夢の通ひ路","人め"],
+  m:"ア",w:"波が「寄る」と「夜」の同じ音を重ねる。"},
+ {p:"【難波潟みじかき蘆の】ふしの間も逢はでこの世を過ぐしてよとや",ans:"ふし",d:["蘆","世","逢はで"],
+  m:"イ",w:"蘆の「節」と「臥し」の掛詞。",note:"節と節との間の短さで逢瀬の短さを表す比喩と見て「ウ」とする説もある。"},
+ {p:"【みかの原わきて流るるいづみ川】いつ見きとてか恋しかるらむ",ans:"いつ見",d:["わきて","流るる","恋しかる"],
+  m:"イ",w:"「いづみ」と「いつ見」の掛詞。"},
+ {p:"【浅茅生の小野の篠原】しのぶれどあまりてなどか人の恋しき",ans:"しのぶ",d:["小野","篠原","恋しき"],
+  m:"ア",w:"「しの（篠）」と「しのぶ」の同じ音を重ねる。"}
+];
+const JO_WHY = [{m:"ア",t:"同音の反復"},{m:"イ",t:"掛詞"},{m:"ウ",t:"比喩"}];
+
+/* 縁語：c=中心語、e=縁語、x=同じ歌の縁語でない語 */
+const ENGO = [
+ {p:"花の色はうつりにけりないたづらにわが身世にふるながめせしまに",c:"花",e:["うつり","ふる","ながめ"],x:["いたづら","わが身","世"]},
+ {p:"これやこの行くも帰るも別れては知るも知らぬもあふ坂の関",c:"別れ",e:["行く","帰る","あふ坂"],x:["知る","知らぬ","関"]},
+ {p:"筑波嶺の峰より落つるみなの川恋ぞ積もりて淵となりぬる",c:"みなの川",e:["峰","落つる","積もり","淵"],x:["筑波嶺","恋"]},
+ {p:"みちのくのしのぶもぢずり誰ゆゑに乱れそめにしわれならなくに",c:"しのぶもぢずり",e:["乱れ","そめ"],x:["みちのく","誰ゆゑに","われ"]},
+ {p:"難波潟短き蘆のふしの間も逢はでこの世を過ぐしてよとや",c:"蘆",e:["短き","ふし","世"],x:["難波潟","逢はで","過ぐして"]},
+ {p:"みかの原わきて流るるいづみ川いつ見きとてか恋しかるらむ",c:"いづみ川",e:["わき","流るる"],x:["みかの原","いつ見","恋しかる"]},
+ {p:"由良の門を渡る舟人かぢを絶え行方も知らぬ恋の道かな",c:"舟人",e:["門","渡る","かぢ","行方"],x:["由良","恋","道"]},
+ {p:"風をいたみ岩打つ波のおのれのみ砕けてものを思ふころかな",c:"波",e:["風","岩","打つ","砕け"],x:["おのれ","もの思ふ","ころ"]},
+ {p:"かくとだにえやはいぶきのさしも草さしも知らじな燃ゆる思ひを",c:"思ひ",e:["さしも草","燃ゆる"],x:["いぶき","知らじ","かくとだに"]},
+ {p:"滝の音は絶えて久しくなりぬれど名こそ流れてなほ聞こえけれ",c:"滝",e:["音","絶え","流れ","聞こえ"],x:["久しく","名","なほ"]},
+ {p:"めぐりあひて見しやそれとも分かぬ間に雲隠れにし夜半の月かな",c:"月",e:["めぐり","雲隠れ","夜半"],x:["見し","分かぬ","間"]},
+ {p:"大江山いく野の道の遠ければまだふみもみず天の橋立",c:"道",e:["いく野","遠けれ","ふみ","橋立"],x:["大江山","天"]},
+ {p:"いにしへの奈良の都の八重桜けふ九重ににほひぬるかな",c:"八重桜",e:["九重","にほひ"],x:["いにしへ","奈良の都","けふ"]},
+ {p:"恨みわびほさぬ袖だにあるものを恋に朽ちなむ名こそ惜しけれ",c:"袖",e:["ほさぬ","朽ち"],x:["恨みわび","恋","名"]},
+ {p:"春の夜の夢ばかりなる手枕にかひなく立たむ名こそ惜しけれ",c:"手枕",e:["夢","かひな"],x:["春の夜","立たむ名","惜し"]},
+ {p:"音に聞く高師の浜のあだ波はかけじや袖の濡れもこそすれ",c:"あだ波",e:["浜","かけ","濡れ"],x:["音に聞く","高師","袖"]},
+ {p:"憂かりける人を初瀬の山おろしよ激しかれとは祈らぬものを",c:"山おろし",e:["激しかれ"],x:["憂かりける","初瀬","祈らぬ"]},
+ {p:"契りおきしさせもが露を命にてあはれ今年の秋もいぬめり",c:"露",e:["させも","命"],x:["契りおきし","あはれ","今年の秋"]}
+];
+
+/* 本歌取り */
+const HONKA = [
+ {p:"契りきなかたみに袖をしぼりつつ末の松山波越さじとは",ans:"本歌取り",d:["枕詞","序詞","縁語"],
+  w:"本歌は「君をおきてあだし心をわが持たば末の松山波も越えなむ」（古今集・東歌）。"}
+];
+
+/* 分野の定義 */
+const WAKA_SECTIONS = [
+ {id:"kugire", name:"句切れ",   type:"kugire", data:KUGIRE, note:"切れ目をタップし、続けて根拠を選びます"},
+ {id:"kake",   name:"掛詞",     type:"kake",   data:KAKE,   note:"掛けられた二つの意味を選びます"},
+ {id:"makura", name:"枕詞",     type:"lead",   data:MAKURA, note:"枕詞が導いている語を選びます"},
+ {id:"jo",     name:"序詞",     type:"jo",     data:JO,     note:"導いている語と、その判断基準を選びます"},
+ {id:"engo",   name:"縁語",     type:"engo",   data:ENGO,   note:"中心語の縁語をすべて選びます"},
+ {id:"honka",  name:"本歌取り", type:"tech",   data:HONKA,  note:"用いられている修辞技法を選びます"}
+];
+
+/* ==================== 共通 ==================== */
 const KANSUJI = ["一","二","三","四","五","六","七","八"];
-const STORE_KEY = "genkokan-goi-best-v2";
-const EXAM_N = 20;
-const EXAM_PASS = 18;
-
-const MODES = {
-  meaning: { label:"意味から選ぶ", prompt:"つぎの意味にあたる語は", field:"m" },
-  cloze:   { label:"例文の空所",   prompt:"空所に入る語は",       field:"s" }
+const STORE_KEY = "genkokan-app-best-v1";
+const EXAM_N = 20, EXAM_PASS = 18;
+const VMODES = {
+  meaning:{label:"意味から選ぶ", prompt:"つぎの意味にあたる語は"},
+  cloze:  {label:"例文の空所",   prompt:"空所に入る語は"}
 };
-let mode = "meaning";
-
-function loadBest(){
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
-  catch(e){ return {}; }
-}
-function saveBest(obj){
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch(e){}
-}
-function shuffle(arr){
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-function setOfWord(word){
-  return SETS[Math.floor((word.n - WORDS[0].n) / 10)];
-}
-function esc(t){ return t.replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-function markBlank(sentence){
-  return esc(sentence).replace("［　］", '<span class="blank">［　　］</span>');
-}
-function fillBlank(sentence, word){
-  return esc(sentence).replace("［　］", "<em>" + esc(word) + "</em>");
-}
-
-const stage = document.getElementById("stage");
+let vmode = "meaning";
+let area = "home";
 let state = null;
 
-/* ---------------- home ---------------- */
+const stage = document.getElementById("stage");
+const crumb = document.getElementById("crumb");
+
+function loadBest(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }catch(e){ return {}; } }
+function saveBest(o){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(o)); }catch(e){} }
+function recordBest(key, score){
+  const b = loadBest();
+  if (b[key] === undefined || score > b[key]){ b[key] = score; saveBest(b); }
+}
+function shuffle(a){
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function mark(p, cls){
+  return esc(p).replace(/【(.+?)】/, '<span class="'+cls+'">$1</span>');
+}
+function stripMark(p){ return p.replace(/[【】]/g, ""); }
+function setOfWord(w){ return SETS[Math.floor((w.n - WORDS[0].n)/10)]; }
+
+/* ==================== トップ ==================== */
 function renderHome(){
-  clearTimer();
-  state = null;
+  clearTimer(); state = null; area = "home"; crumb.textContent = "";
+  stage.innerHTML = `
+    <div class="fade gates">
+      <button class="gate" data-go="goi">
+        <span class="t mincho">語彙</span>
+        <span class="d">評論重要語 141〜216</span>
+        <span class="n">意味から選ぶ／例文の空所　全76語</span>
+      </button>
+      <button class="gate" data-go="waka">
+        <span class="t mincho">和歌の修辞法</span>
+        <span class="d">句切れ・掛詞・枕詞・序詞・縁語・本歌取り</span>
+        <span class="n">百人一首ほか　全70問</span>
+      </button>
+    </div>`;
+  stage.querySelectorAll("[data-go]").forEach(b => {
+    b.addEventListener("click", () => b.dataset.go === "goi" ? renderGoiHome() : renderWakaHome());
+  });
+}
+
+function backBar(label, fn){
+  const el = document.createElement("div");
+  el.className = "actions";
+  el.innerHTML = `<button class="btn" id="back">${label}</button>`;
+  el.querySelector("#back").addEventListener("click", fn);
+  return el;
+}
+
+/* ==================== 語彙 一覧 ==================== */
+function renderGoiHome(){
+  clearTimer(); state = null; area = "goi"; crumb.textContent = "語彙";
   const best = loadBest();
-  const cards = SETS.map((set, i) => {
-    const b = best[mode + "-" + i];
+  const cards = SETS.map((set,i) => {
+    const b = best[`goi-${vmode}-${i}`];
     return `<button class="setcard" data-set="${i}">
       <span class="no mincho">第${KANSUJI[i]}集</span>
       <span class="range">${set[0].n}–${set[set.length-1].n}　全${set.length}問</span>
       <span class="best">${b === undefined ? "" : `最高 ${b} / ${set.length}`}</span>
     </button>`;
   }).join("");
-  const eb = best[mode + "-exam"];
-
+  const eb = best[`goi-${vmode}-exam`];
   stage.innerHTML = `
     <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
       <div class="modes" role="tablist">
-        <button role="tab" data-mode="meaning" aria-selected="${mode === "meaning"}">${MODES.meaning.label}</button>
-        <button role="tab" data-mode="cloze" aria-selected="${mode === "cloze"}">${MODES.cloze.label}</button>
+        <button role="tab" data-vm="meaning" aria-selected="${vmode==="meaning"}">${VMODES.meaning.label}</button>
+        <button role="tab" data-vm="cloze" aria-selected="${vmode==="cloze"}">${VMODES.cloze.label}</button>
       </div>
       <div class="setgrid">${cards}</div>
       <button class="examcard" id="exam">
         <span style="display:flex;flex-direction:column;gap:1px;">
           <span class="t mincho">通しテスト</span>
-          <span class="d">全${WORDS.length}語から${EXAM_N}問を無作為抽出　${EXAM_PASS}問以上で合格</span>
+          <span class="d">全76語から20問を無作為抽出　18問以上で合格</span>
         </span>
         <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb} / ${EXAM_N}`}</span>
       </button>
+      <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
     </div>`;
-
-  stage.querySelectorAll("[data-mode]").forEach(btn => {
-    btn.addEventListener("click", () => { mode = btn.dataset.mode; renderHome(); });
-  });
-  stage.querySelectorAll(".setcard").forEach(btn => {
-    btn.addEventListener("click", () => startSet(Number(btn.dataset.set)));
-  });
-  document.getElementById("exam").addEventListener("click", startExam);
+  stage.querySelectorAll("[data-vm]").forEach(b => b.addEventListener("click", () => { vmode = b.dataset.vm; renderGoiHome(); }));
+  stage.querySelectorAll(".setcard").forEach(b => b.addEventListener("click", () => startGoiSet(Number(b.dataset.set))));
+  document.getElementById("exam").addEventListener("click", startGoiExam);
+  document.getElementById("tohome").addEventListener("click", renderHome);
 }
 
-/* ---------------- start ---------------- */
+/* ==================== 和歌 一覧 ==================== */
+function renderWakaHome(){
+  clearTimer(); state = null; area = "waka"; crumb.textContent = "和歌の修辞法";
+  const best = loadBest();
+  const cards = WAKA_SECTIONS.map(s => {
+    const b = best[`waka-${s.id}`];
+    return `<button class="setcard" data-sec="${s.id}">
+      <span class="no mincho">${s.name}</span>
+      <span class="range">全${s.data.length}問</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${s.data.length}`}</span>
+    </button>`;
+  }).join("");
+  const total = WAKA_SECTIONS.reduce((a,s) => a + s.data.length, 0);
+  const eb = best["waka-exam"];
+  stage.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="setgrid">${cards}</div>
+      <button class="examcard" id="exam">
+        <span style="display:flex;flex-direction:column;gap:1px;">
+          <span class="t mincho">通しテスト</span>
+          <span class="d">全${total}問から20問を無作為抽出　18問以上で合格</span>
+        </span>
+        <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb} / ${EXAM_N}`}</span>
+      </button>
+      <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
+    </div>`;
+  stage.querySelectorAll(".setcard").forEach(b => b.addEventListener("click", () => startWakaSec(b.dataset.sec)));
+  document.getElementById("exam").addEventListener("click", startWakaExam);
+  document.getElementById("tohome").addEventListener("click", renderHome);
+}
+
+/* ==================== 出題キューの組み立て ==================== */
+function vq(word){ return {t:"vocab", w:word}; }
+function wq(sec, item){ return {t:sec.type, d:item, sec:sec.name}; }
+
 function newState(extra){
   clearTimer();
-  return Object.assign({
-    i:0, correct:0, missed:[], answered:false, timer:null, canSkipAt:0
-  }, extra);
+  return Object.assign({i:0, correct:0, missed:[], answered:false, timer:null, canSkipAt:0, stage:1, pick1:null, sel:[]}, extra);
 }
-function startSet(setIndex){
-  state = newState({ kind:"set", setIndex, queue: shuffle(SETS[setIndex]) });
+function startGoiSet(i){
+  state = newState({area:"goi", kind:"set", setIndex:i, title:`第${KANSUJI[i]}集`, key:`goi-${vmode}-${i}`,
+                    queue: shuffle(SETS[i]).map(vq)});
   renderQuestion();
 }
-function startExam(){
-  state = newState({ kind:"exam", queue: shuffle(WORDS).slice(0, EXAM_N) });
+function startGoiExam(){
+  state = newState({area:"goi", kind:"exam", title:"通しテスト", key:`goi-${vmode}-exam`,
+                    queue: shuffle(WORDS).slice(0,EXAM_N).map(vq)});
+  renderQuestion();
+}
+function startWakaSec(id){
+  const s = WAKA_SECTIONS.find(x => x.id === id);
+  state = newState({area:"waka", kind:"set", secId:id, title:s.name, key:`waka-${id}`,
+                    queue: shuffle(s.data).map(d => wq(s,d))});
+  renderQuestion();
+}
+function startWakaExam(){
+  let all = [];
+  WAKA_SECTIONS.forEach(s => s.data.forEach(d => all.push(wq(s,d))));
+  state = newState({area:"waka", kind:"exam", title:"通しテスト", key:"waka-exam",
+                    queue: shuffle(all).slice(0,EXAM_N)});
   renderQuestion();
 }
 function startReview(){
-  state = newState({ kind:"review", setIndex: state.setIndex, from: state.kind, queue: shuffle(state.missed) });
+  state = newState({area:state.area, kind:"review", secId:state.secId, setIndex:state.setIndex,
+                    from:state.kind, title:"復習", queue: shuffle(state.missed)});
   renderQuestion();
 }
 
-/* ---------------- quiz ---------------- */
-function buildChoices(target){
-  const pool = setOfWord(target).filter(x => x.n !== target.n);
-  return shuffle([target, ...shuffle(pool).slice(0, 3)]);
+/* ==================== 出題 ==================== */
+function frame(inner){
+  const total = state.queue.length;
+  return `
+    <div class="fade" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="bar">
+        <span>${esc(state.title)}</span>
+        <span class="count">${state.i + 1} / ${total}</span>
+      </div>
+      <div class="track"><i style="width:${(state.i/total)*100}%"></i></div>
+      ${inner}
+      <div id="after"></div>
+    </div>`;
 }
-
-function headline(){
-  if (state.kind === "exam") return "通しテスト";
-  if (state.kind === "review") return "復習";
-  return `第${KANSUJI[state.setIndex]}集`;
+function choiceList(items){
+  return `<div class="choices">${items.map((c,k) =>
+    `<button class="choice" data-v="${esc(c.v)}" data-k="${k}">
+       <span class="mark">${k+1}</span>
+       <span class="word">${c.h}</span>
+     </button>`).join("")}</div>`;
+}
+function bindChoices(handler){
+  stage.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => handler(b.dataset.v, b)));
 }
 
 function renderQuestion(){
+  state.answered = false; state.stage = 1; state.pick1 = null; state.sel = [];
   const q = state.queue[state.i];
-  const choices = buildChoices(q);
-  state.answered = false;
-  const total = state.queue.length;
-  const body = mode === "cloze" ? markBlank(q.s) : esc(q.m);
+  ({vocab:rVocab, kugire:rKugire, kake:rKake, lead:rLead, jo:rJo, engo:rEngo, tech:rTech})[q.t](q);
+}
 
-  stage.innerHTML = `
-    <div class="fade" style="display:flex;flex-direction:column;gap:16px;">
-      <div class="bar">
-        <span>${headline()}</span>
-        <span class="count">${state.i + 1} / ${total}</span>
-      </div>
-      <div class="track"><i style="width:${(state.i / total) * 100}%"></i></div>
-      <div class="prompt">
-        <div class="label">${MODES[mode].prompt}</div>
-        <p class="meaning">${body}</p>
-      </div>
-      <div class="choices">
-        ${choices.map((c, k) => `
-          <button class="choice" data-n="${c.n}" data-k="${k}">
-            <span class="mark">${k + 1}</span>
-            <span class="word">${esc(c.w)}</span>
-          </button>`).join("")}
-      </div>
-      <div id="after"></div>
-    </div>`;
-
-  stage.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => answer(Number(btn.dataset.n), q));
+/* --- 語彙 --- */
+function rVocab(q){
+  const w = q.w;
+  const pool = setOfWord(w).filter(x => x.n !== w.n);
+  const opts = shuffle([w, ...shuffle(pool).slice(0,3)]).map(x => ({v:String(x.n), h:esc(x.w)}));
+  const body = vmode === "cloze"
+    ? esc(w.s).replace("［　］", '<span class="hl">［　　］</span>')
+    : esc(w.m);
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">${VMODES[vmode].prompt}</div>
+      <p class="body">${body}</p>
+    </div>
+    ${choiceList(opts)}`);
+  bindChoices(v => {
+    const ok = Number(v) === w.n;
+    paintChoices(String(w.n), v);
+    const extra = vmode === "cloze"
+      ? `<span class="filled">${esc(w.s).replace("［　］", "<em>"+esc(w.w)+"</em>")}</span>` : "";
+    finish(ok, `${extra}<span class="gloss"><b>${esc(w.w)}</b>${w.y ? "（"+w.y+"）" : ""}　${esc(w.m)}</span>`);
   });
 }
 
-function answer(picked, q){
+/* --- 句切れ（二段） --- */
+function rKugire(q){
+  const d = q.d;
+  let html = '<p class="waka">';
+  d.k.forEach((ku,i) => {
+    html += `<span class="ku">${esc(ku)}</span>`;
+    if (i < 4) html += `<button class="gap" data-g="${i}">・</button>`;
+  });
+  html += "</p>";
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">句切れの位置をタップ</div>
+      ${html}
+    </div>`);
+  stage.querySelectorAll(".gap").forEach(b => b.addEventListener("click", () => {
+    state.pick1 = Number(b.dataset.g);
+    stage.querySelectorAll(".gap").forEach(x => { x.disabled = true; x.textContent = "・"; x.classList.remove("on"); });
+    b.classList.add("on"); b.textContent = "／";
+    kugireStage2(q);
+  }));
+}
+function kugireStage2(q){
+  const d = q.d;
+  const opts = KUGIRE_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
+  document.getElementById("after").innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="sectitle">そう判断した根拠は</div>
+      ${choiceList(opts)}
+    </div>`;
+  bindChoices(v => {
+    const ok = (state.pick1 === d.at) && (v === d.m);
+    paintChoices(d.m, v);
+    stage.querySelectorAll(".gap").forEach(x => {
+      if (Number(x.dataset.g) === d.at){ x.classList.add("ansmark"); x.textContent = "／"; }
+    });
+    finish(ok, `<span class="gloss"><b>${KUGIRE_NAME[d.at]}</b>　${d.m}　${esc(d.w)}</span>`);
+  });
+}
+
+/* --- 掛詞 --- */
+function rKake(q){
+  const d = q.d;
+  const others = KAKE.filter(x => !(x.a === d.a && x.b === d.b));
+  const picked = []; const seen = new Set([d.a + d.b]);
+  shuffle(others).forEach(x => {
+    if (picked.length < 3 && !seen.has(x.a + x.b)){ seen.add(x.a + x.b); picked.push(x); }
+  });
+  const opts = shuffle([d, ...picked]).map(x => ({v:x.a + "／" + x.b, h:`${esc(x.a)} と ${esc(x.b)}`}));
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">傍線部の掛詞に掛けられた二つの意味は</div>
+      <p class="body">${mark(d.p,"hl")}</p>
+    </div>
+    ${choiceList(opts)}`);
+  bindChoices(v => {
+    const right = d.a + "／" + d.b;
+    paintChoices(right, v);
+    finish(v === right, `<span class="gloss"><b>${esc(d.k)}</b>　……　${esc(d.a)} と ${esc(d.b)}</span>`);
+  });
+}
+
+/* --- 枕詞 --- */
+function rLead(q){
+  const d = q.d;
+  const opts = shuffle([d.ans, ...d.d]).map(x => ({v:x, h:esc(x)}));
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">傍線部の枕詞が導いている語は</div>
+      <p class="body">${mark(d.p,"hl")}</p>
+    </div>
+    ${choiceList(opts)}`);
+  bindChoices(v => {
+    paintChoices(d.ans, v);
+    finish(v === d.ans,
+      `<span class="gloss">導いている語　<b>${esc(d.ans)}</b></span>` +
+      (d.note ? `<span class="note">※${esc(d.note)}</span>` : ""));
+  });
+}
+
+/* --- 序詞（二段） --- */
+function rJo(q){
+  const d = q.d;
+  const opts = shuffle([d.ans, ...d.d]).map(x => ({v:x, h:esc(x)}));
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">網掛けの序詞が導いている語は</div>
+      <p class="body">${mark(d.p,"jo")}</p>
+    </div>
+    ${choiceList(opts)}`);
+  bindChoices(v => {
+    state.pick1 = v;
+    paintChoices(d.ans, v);
+    joStage2(q);
+  });
+}
+function joStage2(q){
+  const d = q.d;
+  const opts = JO_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
+  document.getElementById("after").innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="sectitle">序詞と判断する基準は</div>
+      ${choiceList(opts)}
+    </div>`;
+  bindChoices(v => {
+    const ok = (state.pick1 === d.ans) && (v === d.m);
+    document.querySelectorAll("#after .choice").forEach(b => {
+      b.disabled = true;
+      if (b.dataset.v === d.m) b.classList.add("is-right");
+      else if (b.dataset.v === v) b.classList.add("is-wrong");
+      else b.classList.add("is-dim");
+    });
+    finish(ok,
+      `<span class="gloss">導いている語　<b>${esc(d.ans)}</b>　／　${d.m}　${esc(d.w)}</span>` +
+      (d.note ? `<span class="note">※${esc(d.note)}</span>` : ""));
+  });
+}
+
+/* --- 縁語（複数選択） --- */
+function rEngo(q){
+  const d = q.d;
+  const chips = shuffle([...d.e, ...d.x]);
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">中心語の縁語をすべて選ぶ</div>
+      <p class="body">${esc(d.p)}</p>
+      <p class="sub">中心語　<b>${esc(d.c)}</b></p>
+    </div>
+    <div class="chips">${chips.map(c => `<button class="chip" data-v="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+    <div class="actions"><button class="btn primary" id="grade" disabled>採点する</button></div>`);
+  const grade = document.getElementById("grade");
+  stage.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    b.classList.toggle("on");
+    grade.disabled = stage.querySelectorAll(".chip.on").length === 0;
+  }));
+  grade.addEventListener("click", () => {
+    const sel = [...stage.querySelectorAll(".chip.on")].map(b => b.dataset.v);
+    const ok = sel.length === d.e.length && d.e.every(x => sel.includes(x));
+    stage.querySelectorAll(".chip").forEach(b => {
+      b.disabled = true;
+      const isE = d.e.includes(b.dataset.v), on = b.classList.contains("on");
+      b.classList.remove("on");
+      if (isE && on) b.classList.add("right");
+      else if (isE) b.classList.add("miss");
+      else if (on) b.classList.add("bad");
+    });
+    grade.remove();
+    finish(ok, `<span class="gloss"><b>${esc(d.c)}</b>　……　${d.e.map(esc).join("・")}</span>`);
+  });
+}
+
+/* --- 修辞技法の判別 --- */
+function rTech(q){
+  const d = q.d;
+  const opts = shuffle([d.ans, ...d.d]).map(x => ({v:x, h:esc(x)}));
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="label">この和歌に用いられている修辞技法は</div>
+      <p class="body">${esc(stripMark(d.p))}</p>
+    </div>
+    ${choiceList(opts)}`);
+  bindChoices(v => {
+    paintChoices(d.ans, v);
+    finish(v === d.ans, `<span class="gloss"><b>${esc(d.ans)}</b>　${esc(d.w)}</span>`);
+  });
+}
+
+/* ==================== 採点と送り ==================== */
+function paintChoices(right, picked){
+  stage.querySelectorAll(".choice").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.v === right) b.classList.add("is-right");
+    else if (b.dataset.v === picked) b.classList.add("is-wrong");
+    else b.classList.add("is-dim");
+  });
+}
+function finish(ok, html){
   if (state.answered) return;
   state.answered = true;
-  const ok = picked === q.n;
-  if (ok) state.correct++; else state.missed.push(q);
-
-  stage.querySelectorAll(".choice").forEach(btn => {
-    const n = Number(btn.dataset.n);
-    btn.disabled = true;
-    if (n === q.n) btn.classList.add("is-right");
-    else if (n === picked) btn.classList.add("is-wrong");
-    else btn.classList.add("is-dim");
-  });
-
+  if (ok) state.correct++; else state.missed.push(state.queue[state.i]);
   const wait = ok ? 1000 : 3000;
-  const yomi = q.y ? `（${q.y}）` : "";
-  const extra = mode === "cloze"
-    ? `<span class="filled">${fillBlank(q.s, q.w)}</span>`
-    : "";
-
-  document.getElementById("after").innerHTML = `
-    <div class="verdict ${ok ? "ok" : "ng"} fade">
+  document.getElementById("after").insertAdjacentHTML("beforeend", `
+    <div class="verdict ${ok ? "ok" : "ng"} fade" style="margin-top:14px;">
       <span class="head mincho">${ok ? "正解" : "誤答"}<span class="tap">タップで次へ</span></span>
-      ${extra}
-      <span class="gloss"><b>${esc(q.w)}</b>${yomi}　${esc(q.m)}</span>
+      ${html}
       <div class="countdown" style="--dur:${wait}ms"><i></i></div>
-    </div>`;
-
+    </div>`);
   const bar = stage.querySelector(".countdown");
   if (bar) requestAnimationFrame(() => bar.classList.add("run"));
   state.canSkipAt = Date.now() + 350;
   state.timer = setTimeout(advance, wait);
 }
-
-function clearTimer(){
-  if (state && state.timer){ clearTimeout(state.timer); state.timer = null; }
-}
+function clearTimer(){ if (state && state.timer){ clearTimeout(state.timer); state.timer = null; } }
 function advance(){
   clearTimer();
   if (!state || !state.answered) return;
@@ -476,119 +866,72 @@ document.addEventListener("click", () => {
   if (state && state.answered && state.timer && Date.now() >= state.canSkipAt) advance();
 });
 
-/* ---------------- result ---------------- */
+/* ==================== 結果 ==================== */
+function missLabel(q){
+  if (q.t === "vocab") return {w:q.w.w, m:q.w.m};
+  const d = q.d;
+  if (q.t === "kugire") return {w:KUGIRE_NAME[d.at] + "　" + d.m, m:d.k.join("　")};
+  if (q.t === "kake")   return {w:d.k + "　……　" + d.a + " と " + d.b, m:stripMark(d.p)};
+  if (q.t === "lead")   return {w:d.ans, m:stripMark(d.p)};
+  if (q.t === "jo")     return {w:d.ans + "　／　" + d.m, m:stripMark(d.p)};
+  if (q.t === "engo")   return {w:d.c + "　……　" + d.e.join("・"), m:d.p};
+  return {w:d.ans, m:stripMark(d.p)};
+}
 function renderResult(){
   clearTimer();
-  const total = state.queue.length;
-  const score = state.correct;
+  const total = state.queue.length, score = state.correct;
   const isExam = state.kind === "exam";
   const passed = isExam && score >= EXAM_PASS;
+  if (state.kind !== "review") recordBest(state.key, score);
 
-  if (state.kind !== "review"){
-    const key = isExam ? mode + "-exam" : mode + "-" + state.setIndex;
-    const best = loadBest();
-    if (best[key] === undefined || score > best[key]){ best[key] = score; saveBest(best); }
-  }
-
-  let caption;
-  if (isExam) caption = `通しテスト（${MODES[mode].label}）　${EXAM_PASS}問以上で合格`;
-  else if (state.kind === "review") caption = "復習の結果";
-  else caption = `第${KANSUJI[state.setIndex]}集（${SETS[state.setIndex][0].n}–${SETS[state.setIndex][SETS[state.setIndex].length-1].n}）`;
-
-  const stamp = isExam
-    ? `<div class="stamp mincho ${passed ? "y" : "n"}">${passed ? "合格" : "不合格"}</div>`
-    : "";
-
-  const missBlock = state.missed.length ? `
+  const miss = state.missed.length ? `
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="sectitle">取りこぼした語</div>
-      <div class="misslist">
-        ${state.missed.map(x => `
-          <div class="missrow">
-            <span class="w mincho">${esc(x.w)}</span>
-            <span class="m">${esc(x.m)}</span>
-            <span class="y">${x.y || "—"}</span>
-          </div>`).join("")}
-      </div>
+      <div class="sectitle">取りこぼし</div>
+      <div class="misslist">${state.missed.map(q => {
+        const L = missLabel(q);
+        return `<div class="missrow"><span class="w mincho">${esc(L.w)}</span><span class="m">${esc(L.m)}</span></div>`;
+      }).join("")}</div>
     </div>` : `<p class="sectitle">取りこぼしはございません。</p>`;
-
-  const againLabel = isExam ? "もう一度（別の20問）" : "同じ集をもう一度";
 
   stage.innerHTML = `
     <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
       <div class="score ${passed ? "pass" : ""}">
-        ${stamp}
+        ${isExam ? `<div class="stamp mincho ${passed?"y":"n"}">${passed?"合格":"不合格"}</div>` : ""}
         <div class="n mincho">${score}<small> / ${total}</small></div>
-        <div class="caption">${caption}</div>
+        <div class="caption">${esc(state.title)}${isExam ? `　${EXAM_PASS}問以上で合格` : ""}</div>
       </div>
-      ${missBlock}
+      ${miss}
       <div class="actions">
-        ${state.missed.length ? `<button class="btn primary" id="review">間違えた語だけ復習</button>` : ""}
-        <button class="btn" id="again">${againLabel}</button>
-        <button class="btn" id="home">一覧へ戻る</button>
+        ${state.missed.length ? `<button class="btn primary" id="review">間違えた分だけ復習</button>` : ""}
+        <button class="btn" id="again">${isExam ? "もう一度（別の20問）" : "もう一度"}</button>
+        <button class="btn" id="list">一覧へ戻る</button>
       </div>
     </div>`;
 
   const rv = document.getElementById("review");
   if (rv) rv.addEventListener("click", startReview);
   document.getElementById("again").addEventListener("click", () => {
-    if (isExam || state.from === "exam") startExam();
-    else startSet(state.setIndex);
+    const wasExam = isExam || state.from === "exam";
+    if (state.area === "goi") wasExam ? startGoiExam() : startGoiSet(state.setIndex);
+    else wasExam ? startWakaExam() : startWakaSec(state.secId);
   });
-  document.getElementById("home").addEventListener("click", renderHome);
+  document.getElementById("list").addEventListener("click", () => state.area === "goi" ? renderGoiHome() : renderWakaHome());
 }
 
-/* ---------------- keyboard ---------------- */
+/* ==================== キーボード ==================== */
 document.addEventListener("keydown", e => {
   if (!state) return;
   if (!state.answered && ["1","2","3","4"].includes(e.key)){
-    const btn = stage.querySelector(`.choice[data-k="${Number(e.key) - 1}"]`);
-    if (btn) { e.preventDefault(); btn.click(); }
+    const btns = stage.querySelectorAll(".choice:not(:disabled)");
+    const b = btns[Number(e.key) - 1];
+    if (b){ e.preventDefault(); b.click(); }
   } else if (state.answered && state.timer && (e.key === "Enter" || e.key === " ")){
-    e.preventDefault();
-    advance();
+    e.preventDefault(); advance();
   }
 });
 
 renderHome();
 </script>
 
-<style>
-  /* --- スマートフォン向けの寸法調整 --- */
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{font-size:16px;-webkit-text-size-adjust:100%;}
-  .wrap{
-    max-width:620px;
-    padding-inline:16px;
-    padding-block:calc(22px + env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px));
-  }
-  .masthead h1{font-size:25px;}
-  .modes button{padding:14px 8px;font-size:15px;}
-  .setcard{padding:15px 16px;}
-  .setcard .no{font-size:19px;}
-  .setcard .range,.setcard .best{font-size:12.5px;}
-  .examcard{padding:16px;}
-  .examcard .t{font-size:19px;}
-  .examcard .d{font-size:12.5px;}
-  .prompt{padding:22px 18px;}
-  .prompt .label{font-size:12px;}
-  .prompt .meaning{font-size:21px;line-height:1.95;}
-  .choice{padding:15px 16px;min-height:58px;}
-  .choice .mark{width:26px;height:26px;font-size:13px;}
-  .choice .word{font-size:21px;}
-  .verdict .head{font-size:18px;}
-  .verdict .gloss{font-size:14.5px;}
-  .verdict .filled{font-size:15.5px;}
-  .btn{padding:12px 18px;font-size:15px;}
-  .score .n{font-size:44px;}
-  .missrow .w{font-size:18px;}
-  .missrow .m{font-size:13.5px;}
-  @media (min-width:700px){
-    body{font-size:15px;}
-    .prompt .meaning{font-size:20px;}
-    .choice .word{font-size:20px;}
-  }
-</style>
 </body>
 </html>
