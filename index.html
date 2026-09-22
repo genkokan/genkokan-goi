@@ -83,6 +83,9 @@
 
   .setgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
   @media (max-width:430px){.setgrid{grid-template-columns:1fr;}}
+  .setgrid.tight{grid-template-columns:repeat(2,1fr);}
+  .setgrid.tight .setcard{padding:12px 14px;}
+  .setgrid.tight .setcard .no{font-size:18px;}
   .setcard{
     appearance:none; text-align:left; cursor:pointer; font:inherit;
     background:var(--paper-raised); color:inherit;
@@ -126,6 +129,23 @@
   .prompt .body .jo{background:var(--shu-soft); border-bottom:2px solid var(--shu); padding:1px 2px;}
   .prompt .sub{font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.7;}
   .prompt .sub b{font-family:"Shippori Mincho",serif; font-size:16px; color:var(--ink);}
+  .prompt .src{font-size:11.5px; color:var(--faint); letter-spacing:.08em; margin-bottom:4px;}
+  .prompt .body.long{font-size:17.5px; line-height:1.95; text-wrap:pretty;}
+  .bs{text-decoration:underline; text-decoration-color:var(--shu); text-decoration-thickness:2px;
+    text-underline-offset:5px; font-weight:700;}
+  .choice .word.sent{font-size:16.5px; line-height:1.7; font-weight:500; letter-spacing:0;}
+  .choice.on{border-color:var(--ai); background:var(--ai-soft);}
+
+  .gap.on{color:var(--ai); background:var(--ai-soft); font-weight:700; border-bottom:0;}
+  .gap.ansmark{color:var(--shu); background:var(--shu-soft); font-weight:700; border-bottom:0;}
+  .gap.ng{color:var(--ai); background:var(--ai-soft); text-decoration:line-through; border-bottom:0;}
+  .prompt .qtext{font-size:14px; color:var(--ink-soft); margin:0 0 12px; line-height:1.7;}
+  .lb{display:inline-block; font-family:"Zen Kaku Gothic New",sans-serif; font-size:.62em; font-weight:700;
+    color:var(--ai); border:1px solid var(--ai); border-radius:2px; padding:0 4px; margin:0 2px;
+    line-height:1.4; vertical-align:.25em;}
+  .choice .word .bs{text-underline-offset:4px;}
+  .choice:disabled .word .bs{text-decoration-color:currentColor;}
+  .verdict .why{font-size:13.5px; color:var(--ink); line-height:1.75;}
 
   /* 句切れ：和歌＋切れ目 */
   .waka{font-family:"Shippori Mincho",serif; font-size:20px; line-height:2.3;
@@ -138,8 +158,6 @@
     font-size:19px; line-height:1; border-radius:2px;
   }
   .gap:hover{background:var(--shu-soft);}
-  .gap.on{color:var(--shu); border-bottom:0; font-weight:700; background:var(--shu-soft);}
-  .gap.ansmark{color:var(--shu); font-weight:700; border-bottom:0;}
   .gap:disabled{cursor:default;}
 
   .choices{display:flex; flex-direction:column; gap:8px;}
@@ -445,6 +463,293 @@ const WAKA_SECTIONS = [
  {id:"honka",  name:"本歌取り", type:"tech",   data:HONKA,  note:"用いられている修辞技法を選びます"}
 ];
 
+/* ==================== 助動詞 ==================== */
+/* 助動詞：高校古文ブラッシュアップセミナー「助動詞の核心」より
+   no＝大問番号（同じ本文の小問は 7-1 のように枝番）　【】＝傍線部　〈 〉＝記号　\n＝改行 */
+const JD = [
+{g:"る・らる", items:[
+ {no:"1", src:"近畿大", c:"◎", body:"明日見れば、大蟹八つ集まり、その蛇篠然（しょうぜん）にむしり段（つた）切ら【る】。",
+  q:"傍線部と文法的に同じものはどれか。最も適切なものを選べ。",
+  opts:["冬はいかなる所にも住ま【る】","いかさまにかと思しまどは【る】","交野の少将には笑は【れ】給ひけむかし","今日はまして母の悲しがら【るる】事は"],
+  a:3, why:"蛇が蟹に切られる受身。3は「少将に」の「に」があり受身。1可能、2・4自発。"},
+ {no:"2", src:"明治大", c:"◎", body:"されば、師つねに「…」と諭さ【れ】たり。",
+  q:"傍線部「れ」と同じ意味のものを一つ選べ。",
+  opts:["筆をとれば物書か【れ】楽器をとれば音を立てんと思ふ","飢ゑを助け嵐を防ぐよすがなくてはあら【れ】ぬわざなれば","むさぼる心に引か【れ】てみづから身を恥づかしむるを","大臣の寝殿に鳶ゐさせじとて縄を張ら【れ】たりけるを"],
+  a:4, why:"主語「師」が偉い人で尊敬。4も大臣が主語の尊敬。1自発、2可能（打消を伴う）、3受身。"},
+ {no:"3", src:"専修大", c:"◎", body:"…恐ろしげなること命限りつと思ひ惑は【る】。",
+  q:"傍線部に用いられた助動詞「る」と同じ用法の「る」を選べ。",
+  opts:["故宮のはてまでそしら【れ】させ給ひしもこれによりてぞかし。","かくてもあら【れ】けるよとあはれに見るほどに","今日は都のみぞ思ひやら【るる】","堀川殿にて舎人が寝たる足を狐に食は【る】","かりそめに言ひ散らさ【れ】しあだなるたはぶれ言も"],
+  a:3, why:"心情語「思ひ惑ふ」に付く自発。3「思ひやる」も自発。1・4受身、2可能。"},
+ {no:"4", src:"大分大", conv:true, c:"◎", body:"世にはやるといふ事どもを見聞くに、道々しきにも、芸能にも、よきことのみおこなは【るる】にはあらで、おほかたがなしやすく、まなびやすき事の、まづはやるなりけり。",
+  q:"傍線部の助動詞の意味として最も適当なものを選べ。",
+  opts:["受身","尊敬","自発","可能"],
+  a:1, why:"「よいことばかりが（世に）行われる」の受身。"},
+ {no:"5", src:"駒沢大", c:"◎", body:"「…そもそもさまでやはなほ憂くて命あらむ」など。心細うて言は【る】。\n袖ひつる時をだにこそ嘆きしか身さへ時雨のふりもゆくかな（蜻蛉日記）",
+  q:"傍線部「言はる」とはどういう意味か。最も適当なものを選べ。",
+  opts:["ア　言い張る","イ　おっしゃる","ウ　人に言われる","エ　願いをかける","オ　自然と口に出る"],
+  a:5, why:"「心細う」という心情を受けて、思わず口をついて出る自発。"},
+ {no:"6", src:"日本大", c:"◎", body:"見し東路のことなども思ひ出で【られ】て",
+  q:"傍線部と文法上同一なものはどれか。最も適当なものを選べ。",
+  opts:["なきことによりてかく罪せ【られ】給ふを","馬引き返して逃げ【られ】にけり","大臣の宣はく、「それはいかで見【られ】しぞ」","笑ひもせ【られ】「あはれ」とも独りごたるるに"],
+  a:4, why:"「思ひ出づ」に付く自発。4も自然と笑いが出る自発。1受身。2は主語が明示されていないが尊敬。3も尊敬。"},
+ {no:"7-1", src:"学習院大", c:"◎", body:"〈A〉死にて閻魔の庁に召さ【れ】て、王の御前とおぼしき所に参りたるに、\n〈B〉「この玉の簾のうちにゐさせ給ひて、かやうに物の沙汰して、我をかへさ【るる】人は…」",
+  q:"傍線部Aの助動詞の意味を選べ。",
+  opts:["自発","尊敬","可能","受身","存続","完了"],
+  a:4, why:"閻魔王に召される受身。"},
+ {no:"7-2", src:"学習院大", c:"◎", body:"〈A〉死にて閻魔の庁に召さ【れ】て、王の御前とおぼしき所に参りたるに、\n〈B〉「この玉の簾のうちにゐさせ給ひて、かやうに物の沙汰して、我をかへさ【るる】人は…」",
+  q:"傍線部Bの助動詞の意味を選べ。",
+  opts:["自発","尊敬","可能","受身","存続","完了"],
+  a:2, why:"閻魔王への敬意。直前の「ゐさせ給ひて」と同じ人物を主語とする尊敬。"},
+ {no:"8", src:"中央大", c:"◎", body:"八月になりて、二十余日の暁がたの月、いみじくあはれに、山の方はこぐらく、縄の音も似るものなくのみながめ【られ】て、（更級日記）",
+  q:"傍線部「られ」と同じ意味で用いられているものを選べ。",
+  opts:["A　さて、殿にかうなむ、仰せ【られ】し","B　入り給ひてふし給へれど、寝もね【られ】ず","C　問いつめ【られ】て、え答へずなりはべりつ","D　女はその後ものおぼえで、嘆きのみせ【らるれ】"],
+  a:4, why:"「ながむ（物思いにふける）」に付く自発。Dの「嘆く」も心情で自発。A尊敬、B可能（打消）、C受身。"},
+ {no:"9", src:"明治大", c:"◎", body:"夢に夢みる心ちして、我が身にもあら【れ】侍らぬままに、てづからもとどり切りて、横竹といふ所におはして、行ひすましていまそかりけり。（撰集抄）",
+  q:"傍線部「れ」の文法的意味として最も適当なものを選べ。",
+  opts:["受身","可能","完了","自発","尊敬"],
+  a:2, why:"打消「ぬ」を伴う可能。"}
+]},
+{g:"す・さす・しむ", items:[
+ {no:"10", src:"白百合女子大", conv:true, c:"◎", body:"見るに打た【せ】むことのいとほしうおぼえければ、",
+  q:"傍線部の文法的説明として最も適当なものを選べ。",
+  opts:["使役の助動詞「す」の未然形","尊敬の助動詞「す」の未然形","使役の助動詞「す」の連用形","尊敬の助動詞「す」の連用形"],
+  a:1, why:"下に尊敬語がなく使役。「む」に続くので未然形。"},
+ {no:"11", src:"神奈川大", c:"◎", body:"しばしあれば、宮、紅の御衣二つばかりにおしつつまれて、鞠のごとく御簾中よりころび出で【させ】給ひて、",
+  q:"傍線部の文法的説明として最適なものを選べ。",
+  opts:["「させ」は尊敬の助動詞","「させ」は使役の助動詞","「さ」は動詞の一部、「せ」は尊敬の助動詞","「さ」は動詞の一部、「せ」は使役の助動詞"],
+  a:1, why:"下二段「出づ」の未然形「出で」＋「させ」。主語は宮、下に「給ふ」で尊敬。"},
+ {no:"12", src:"多摩川大", conv:true, c:"◎", body:"今は昔、田舎の児の比叡の山へ登りたりけるが、桜のめでたく咲きたりけるに、風のはげしく吹きけるを見て、この児さめざめと泣きけるを見て、僧のやはら寄りて、「などかうは泣かさせ給ふぞ。この花の散るを惜しう覚えさせ給ふか。」",
+  q:"本文には文法上の誤りが一か所ある。それを含むものを選べ。",
+  opts:["登りたりける","泣かさせ給ふ","惜しう","覚えさせ給ふ"],
+  a:2, why:"正しくは「泣かせ給ふ」。四段「泣く」の未然形（ア段）には「す」が付く。「覚え」は下二段なので「させ」で正しい。"},
+ {no:"13", src:"同志社大", c:"◎", body:"この道に志の深かりし事は、道因入道並びなき者なり。七、八十になるまで、秀歌詠ま【せ】給へと祈らむため、かちより住吉へ月詣でしたる、いとありがたきことなり。",
+  q:"傍線部「せ」と同じ意味・用法のものを選べ。",
+  opts:["上おはしますに、御覧じていみじう驚か【せ】給ふ。","こなたかなたに心をあはせて、はしたなめわづらは【せ】給ふ。","父判官も軍奉行をつかまつら【せ】らるる上は、われこそ先陣を駆けめ。","家来多く討た【せ】、馬の腹射させて引き退く。","御門おりさ【せ】給ひて、春宮四つにならせ給ふにゆづり申させ給ふ。"],
+  a:2, why:"本文は住吉の神に「（私に）秀歌を詠ませてください」と祈る使役で、「給ふ」を伴いながら使役である点が要。2も女御たちが更衣を困らせる使役で「給ふ」を伴う。1は帝を主語とする尊敬（せ給ふ＝二重尊敬）。3は父判官を主語とし、下に尊敬「らるる」を伴う尊敬（せらるる）。4は尊敬語を伴わない使役で、軍記物特有の「討たれる」の意。5は「させ」が尊敬の助動詞で「せ」はその一部（させ給ふ＝二重尊敬）。"}
+]},
+{g:"ず", items:[
+ {no:"14-1", src:"学習院大", conv:true, c:"◎", body:"亭主腹立して、客を露地に入れてから、提灯をともして迎ひに出るに、客はまだ合点ゆか【ず】〈①〉、夜の足もとするこそをかしけれ。あるじおもしろから【ね】〈②〉ば、花入れに土つきたる芋の葉をいけて見すれども、そのとほりなり。とかく心得【ぬ】〈③〉人には心得あるべし。",
+  q:"傍線部①の助動詞「ず」の活用形を選べ。",
+  opts:["未然形","連用形","終止形","連体形"],
+  a:2, why:"読点で文を中止しているので連用形（中止法）。"},
+ {no:"14-2", src:"学習院大", conv:true, c:"◎", body:"亭主腹立して、客を露地に入れてから、提灯をともして迎ひに出るに、客はまだ合点ゆか【ず】〈①〉、夜の足もとするこそをかしけれ。あるじおもしろから【ね】〈②〉ば、花入れに土つきたる芋の葉をいけて見すれども、そのとほりなり。とかく心得【ぬ】〈③〉人には心得あるべし。",
+  q:"傍線部②の助動詞「ず」の活用形を選べ。",
+  opts:["未然形","連用形","連体形","已然形"],
+  a:4, why:"「ね＋ば」で已然形（確定条件）。"},
+ {no:"14-3", src:"学習院大", conv:true, c:"◎", body:"亭主腹立して、客を露地に入れてから、提灯をともして迎ひに出るに、客はまだ合点ゆか【ず】〈①〉、夜の足もとするこそをかしけれ。あるじおもしろから【ね】〈②〉ば、花入れに土つきたる芋の葉をいけて見すれども、そのとほりなり。とかく心得【ぬ】〈③〉人には心得あるべし。",
+  q:"傍線部③の助動詞「ず」の活用形を選べ。",
+  opts:["終止形","連体形","已然形","命令形"],
+  a:2, why:"体言「人」に続く連体形。"},
+ {no:"15", src:"早稲田大", c:"◎", multi:true, body:"げに、かやうの筋にてこそ人の諫めをも、みづからの心にも従は【ぬ】やうにはべりけれ。",
+  q:"傍線部の助動詞「ぬ」と異なる助動詞を四つ選べ。",
+  opts:["みな人は、まことの道に入り【ぬ】なり。","わびしさの千種の数も忘られ【ぬ】べし。","おいらかに、あたりよりだに、な歩きそとやは宣は【ぬ】。","この国に見え【ぬ】玉の枝なり。","翁を、いとほしくかなしと思しつる事も失せ【ぬ】。","泣き【ぬ】ばかりに、恨みののしること限りなし。"],
+  a:[1,2,5,6], why:"本文は打消「ず」の連体形。1・2・5・6は連用形接続の完了「ぬ」。3は「やは」の結び、4は体言に続き、いずれも打消の連体形。"}
+]},
+{g:"む・むず", items:[
+ {no:"16", src:"同志社大", c:"◎", body:"文を多くみれば、おのづからひとり知らるべき事なり。始めより一枚二枚の文にても、のこらず見解せ【む】とする事なりがたかるべし。功をつもればおのづからことわり分明なりと申されけるとなり。",
+  q:"傍線部の「む」と同じ意味のものを選べ。",
+  opts:["折にふれば、なにかはあはれならざら【む】。","いとやすきこと、たしかに守り侍ら【む】。","子といふもの、なくてありな【む】。","この獅子の立ちやう、いとめづらし。深きゆゑあら【む】。","思は【む】子を法師になしたらむこそ心ぐるしけれ。"],
+  a:2, why:"「むとす」で「〜しようとする」の意志。2は一人称の意志。1推量（反語）、3適当、4推量、5婉曲。"},
+ {no:"17-1", src:"同志社大", c:"◎", body:"四条大納言、…大納言辞退し申さ【む】〈ア〉とせられけるに、匡衡を招きて、「辞表を奉らむと思ふあひだ、…貴殿ばかりぞ書きひらかれ【む】〈イ〉と思ふ」といはれければ、…",
+  q:"傍線部アの「む」と同じ文法的意味のものを選べ。",
+  opts:["少納言よ、香炉峰の雪、いかなら【む】。","思は【む】子を法師になしたらむこそ心ぐるしけれ。","熟田津に船乗りせ【む】と月待てば潮もかなひぬ今はこぎ出でな。","吾と思は【む】人々は高綱に組めや。","今さらになにかはおほとのごもる。起きさせ給は【む】。"],
+  a:3, why:"「むとす」で意志。3も「船出しよう」の意志。"},
+ {no:"17-2", src:"同志社大", c:"◎", body:"四条大納言、…大納言辞退し申さ【む】〈ア〉とせられけるに、匡衡を招きて、「辞表を奉らむと思ふあひだ、…貴殿ばかりぞ書きひらかれ【む】〈イ〉と思ふ」といはれければ、…",
+  q:"傍線部イの「む」と同じ文法的意味のものを選べ。",
+  opts:["少納言よ、香炉峰の雪、いかなら【む】。","思は【む】子を法師になしたらむこそ心ぐるしけれ。","熟田津に船乗りせ【む】と月待てば潮もかなひぬ今はこぎ出でな。","吾と思は【む】人々は高綱に組めや。","今さらになにかはおほとのごもる。起きさせ給は【む】。"],
+  a:1, why:"「辞表をうまくお書きになれるのはあなただけだろう」という推量。主語が二人称なら適当・勧誘というのはあくまで目安で、文意から判断する。"},
+ {no:"18", src:"神奈川大", c:"◎", body:"「さて鷹飼はでは、いかがしたまは【むずる】」といひたれば、やをらたちはしりて、しすゑたる鷹を、にぎりはなちつ。",
+  q:"傍線部の解釈として最適のものを選べ。",
+  opts:["どのようになさるおつもりか。","どのようにするつもりか。","どのようにもなされないだろう。","どのようになされてもいいだろう。"],
+  a:1, why:"「たまふ」があり相手の動作。相手の意志を問う。"},
+ {no:"19", src:"センター試験", c:"◎", body:"・軒端の梅の、かつ咲きそめたるを、女の童折りて、「君ならでは」と見せたりしかば、顔近く引き寄せ、「うれしげにも咲きたる花かな。色よりも香こそあはれなれ。我はかく、今日明日とおぼゆるを、げにこの世のほかの思ひ出これなら【ん】〈a〉かし。桜はまだしくて見ざらんぞ口惜しき。」など、思ひ入れたる顔のにほひ、あらぬ人なれど、さすがになつかしからずはあらず。\n・翁と母、手を捕らへて、呼び生け呼び生け、「なほ言はまほしから【ん】〈b〉ことあらば、のたまへ。心のうち晴るけやらぬは罪深し」など言へば、うちうなづき、「我をば煙となし給ふな。それなん心にかかる。先立ちて二人の親に嘆かせたてまつらん心憂さ、黄泉路もやすくは行きやられじ。また病ひ少し緩みある折々は、辞世の歌、心にかけしを詠みおかず成りぬると、姉君のただならずおはして、近きほどに生ませ給へらん稚児の、めづらかにをかしからん顔つき見ずなりなん、いとど残り多かる。さならでは何の思ひおくことあらん。かまへて亡骸を損なはでをさめて【ん】〈c〉。もしたがひもぞする」とうしろめたげなり。\n・四、五日ありて、初桜の面白きを人のもとよりおこせたるに、とく、ゆかしがりつるものを見せ【ん】〈d〉と、花瓶に挿しおきたれば、うちながめて、「はや咲きにけり。春のゆくへも知らぬ間に」と、言の葉ごとに偲ばるべきふしをとどめ、はかなき筆のすさみにも、あはれなることをのみ書きおけるは、長き世の形見にも見よとなるべし。",
+  q:"傍線部a〜dの「ん」の文法的意味の組み合わせとして正しいものを選べ。",
+  opts:["a婉曲　b推量　c勧誘　d意志","a推量　b婉曲　c勧誘　d意志","a推量　b意志　c婉曲　d勧誘","a意志　b婉曲　c勧誘　d推量","a婉曲　b推量　c意志　d勧誘"],
+  a:2, why:"a文末「かし」を伴う推量、b下に体言「こと」で婉曲、c臨終の者が家族に頼む勧誘、d自分が見せようとする意志。"}
+]},
+{g:"じ", items:[
+ {no:"20", src:"中央大", c:"◎", body:"祭りのころはなべて今めかしう見ゆるにやあらむ、あやしき小家の半蔀も、葵などかざして、心地よげなる、童べの、柏・袴清げに着て、さまざまの物忌みども付け、化粧して、我も劣ら【　】といどみたる気色どもにて行きちがふは、をかしく見ゆるを…",
+  q:"空欄に入れるのにもっとも適当なものを選べ。",
+  opts:["A　まし","B　まじ","C　じ","D　め","E　ぬ"],
+  a:3, why:"一人称の打消意志「劣るまい」。未然形「劣ら」に付くのは「じ」（「まじ」は終止形接続）。"}
+]},
+{g:"まし", items:[
+ {no:"21", src:"関西学院大", c:"◎", body:"この君達のおはせざらましかば、今宵のねぶりさましは【　】。",
+  q:"文中の空白部を補うのに最も適当な語を選べ。",
+  opts:["ア　なかるべし","イ　なかるまじ","ウ　なかりけむ","エ　なからまし","オ　なかるらむ"],
+  a:4, why:"「ましかば〜まし」の反実仮想。"},
+ {no:"22", src:"神戸女学院大", c:"◎", body:"もろともに錦を着てやかへら【まし】うきにたへたる心なりせば",
+  q:"傍線部の助動詞の意味を選べ。",
+  opts:["希望","反実仮想","尊敬","受身","使役","比況"],
+  a:2, why:"「せば〜まし」の反実仮想。"},
+ {no:"23", src:"関西学院大", c:"◎", body:"「絶えぬ、と見【　】ば、かりに来るにはまさりなまし」など思ひ続くる折に、ものしたる日あり。",
+  q:"次の空欄に入る助動詞を選べ。",
+  opts:["ざれ","ぬれ","らめ","ましか","まほしけれ"],
+  a:4, why:"「ましかば〜まし」の反実仮想。"},
+ {no:"24", src:"早稲田大", c:"◎", body:"つれなき世のあはれさもみづから聞え合せたくなどあれば、例のうち、寝るほどの鐘の響きに、人知れず頼みをかくるも、思へばあさましく、世の常ならずあだなる身の行方、つひにいかに果てんとすらんと、心細く思ひつづくるにも、ありしながらの心ならましかば、浮きたる身のとがもかうまでは思ひ知らずぞ過ぎ【まし】。",
+  q:"傍線部「まし」は、文法上、上の語句のどれに呼応しているか選べ。",
+  opts:["イ　つひに","ロ　いかに","ハ　心細く","ニ　ましかば","ホ　かうまでは"],
+  a:4, why:"「ましかば〜まし」の呼応。"},
+ {no:"25", src:"北海道大", conv:true, c:"◎", body:"（光源氏は晩春のある日、北山で可憐な紫の君を垣間見て、ぜひ自宅に引きとりたいと希望していた。だが、祖母尼上は紫の君の幼なさを理由に固辞している。）\n尼上「いとかたじけなきわざにもはべるかな。この君だに、かしこまりも聞こえたまひつべきほどなら【ましかば】」とのたまふ。あはれに聞きたまひて、「何か浅う思ひたまへむことゆゑ、かうすきずきしきさまを見えたてまつらむ。」",
+  q:"傍線部は「〜ましかば」と言いさした形で終わっている。下に省略された言葉を補った現代語訳として最も適当なものを選べ。",
+  opts:["せめてこの子がお礼を申し上げられる年齢であったなら、よかったでしょうに","この子がお礼を申し上げられる年齢になったら、改めてお返事いたしましょう","この子でさえお礼を申し上げられる年齢なのですから、ご遠慮には及びません","この子がお礼を申し上げられる年齢であれば、きっと喜ぶことでしょう"],
+  a:1, why:"「ましかば」の後に「よからまし」などが省略された反実仮想。「だに」は最小限の希望「せめて〜だけでも」。"}
+]},
+{g:"まほし", items:[
+ {no:"26", src:"東洋大", c:"◎", body:"いみじくさしいらへもせ【まほしき】こと多かれど、",
+  q:"傍線部の文法的説明を選べ。",
+  opts:["受身の助動詞","打消の助動詞","過去の助動詞","願望の助動詞","完了の助動詞","推量の助動詞","自発の助動詞","尊敬の助動詞","使役の助動詞","断定の助動詞"],
+  a:4, why:"未然形接続、「〜たい」の願望。"},
+ {no:"27", src:"明治大", c:"◎", body:"さやかに見給ひし昼寝の夢も、ゆくへ知ら【まほしく】、",
+  q:"傍線部「まほしく」と同じ意味を表す語を選べ。",
+  opts:["たし","べし","まじ","らし","ごとし"],
+  a:1, why:"「まほし」と「たし」はともに願望。"}
+]},
+{g:"き・けり", items:[
+ {no:"28", src:"九州大", conv:true, c:"○", body:"十六日に三毬杖（さんぎちょう）焼かれしに、誰々も参り【しか】ども、頭中将ばかり長橋へも昇らで出でけり。\n＊三毬杖：正月十五日・十八日に行われた火祭り。",
+  q:"傍線部の文法的説明として最も適当なものを選べ。",
+  opts:["過去の助動詞「き」の連体形","過去の助動詞「き」の已然形","サ変動詞「す」の連用形","強意の副助詞「し」"],
+  a:2, why:"「ども」は已然形に付く。"},
+ {no:"29", src:"早稲田大", c:"○", body:"・そこに古老の者の侍り【　】〈A〉を語らひて、昔のことを尋ね侍りしついでに、\n・かの井手の大臣の堂は、一年焼け侍りに【　】〈B〉。\n・また、かの井手川の汀につきて隙もなく侍り【　】〈C〉ば、花の盛りには黄金の堤などを築き渡したらむやうにて、他所にはすぐれてなむ侍り【　】〈D〉。",
+  q:"次の空欄に入る助動詞「き」の組み合わせを選べ。",
+  opts:["A:き　B:し　C:しか　D:き","A:し　B:しか　C:せ　D:し","A:しか　B:き　C:しか　D:き","A:し　B:き　C:しか　D:し","A:き　B:しか　C:せ　D:し"],
+  a:4, why:"A「を」に続く準体の連体形、B文末の終止形、C「ば」に続く已然形（確定条件）、D「なむ」の結びで連体形。"},
+ {no:"30", src:"横浜国立大", conv:true, c:"◎", body:"内にまゐりて、御鷹の失せたるよし奏したまふ時に、帝、ものものたまはせず。…たいだいしとおぼしたる【なりけり】と、われにもあらぬ心地して、かしこまりていますかりて、「この御鷹の、もとむるに、侍らぬことを、いかさまにかしはべらむ。などかおほせごともたまはぬ」と奏したまふ。",
+  q:"傍線部を「けり」の用法に注意して現代語訳したものとして最も適当なものを選べ。",
+  opts:["けしからぬとお思いになっていたのだった","けしからぬとお思いになっていたということだ","けしからぬとお思いになっていたのだなあ","けしからぬとお思いになっていたにちがいない"],
+  a:3, why:"帝が何もおっしゃらない理由に初めて気づいた詠嘆の「けり」。「〜だなあ」「〜なことだよ」と訳出する。"},
+ {no:"31", src:"関西学院大", conv:true, c:"◎", body:"来【　】ど、",
+  q:"空欄には過去の助動詞「き」が入る。最も適当な形を選べ。",
+  opts:["き","し","しか","せ"],
+  a:3, why:"「ど」は已然形接続。カ変「来」には「こしか」と付く。"},
+ {no:"32-1", src:"西南学院大", c:"○", body:"〈1〉昔思ひ出でられて、かきぞくらさ【るる】。\n〈2〉「これを主とうち縮みまゐらせてさぶらは【むずる】か」と、\n〈3〉「…おとなしくならせ給ひに【けり】」と見ゆ。",
+  q:"傍線部1の助動詞の文法上の意味を選べ。",
+  opts:["推量","詠嘆","過去","完了","強意","存続","適当","当然","自発","尊敬"],
+  a:9, why:"心が暗くなる心情表現に付く自発（「ぞ」の結びで連体形）。"},
+ {no:"32-2", src:"西南学院大", c:"◎", body:"〈1〉昔思ひ出でられて、かきぞくらさ【るる】。\n〈2〉「これを主とうち縮みまゐらせてさぶらは【むずる】か」と、\n〈3〉「…おとなしくならせ給ひに【けり】」と見ゆ。",
+  q:"傍線部2の助動詞の文法上の意味を選べ。",
+  opts:["推量","詠嘆","過去","完了","強意","存続","適当","当然","自発","尊敬"],
+  a:1, why:"「これを主人として恐縮してお仕えすることになるのだろうか」の推量。"},
+ {no:"32-3", src:"西南学院大", c:"○", body:"〈1〉昔思ひ出でられて、かきぞくらさ【るる】。\n〈2〉「これを主とうち縮みまゐらせてさぶらは【むずる】か」と、\n〈3〉「…おとなしくならせ給ひに【けり】」と見ゆ。",
+  q:"傍線部3の助動詞の文法上の意味を選べ。",
+  opts:["推量","詠嘆","過去","完了","強意","存続","適当","当然","自発","尊敬"],
+  a:2, why:"会話文中の「けり」で詠嘆（大人びておなりになったなあ）。"},
+ {no:"33", src:"北海道大", conv:true, c:"◎", body:"このおとど、これ大入道殿の御三郎、粟田殿とこそはきこえさすめり【　】〈1〉。長徳元年乙未五月二日、関白の宣旨かうぶらせたまひて、おなじ月の八日、亡せさせたまひに【　】〈2〉。大臣の位にて五年、関白と申して七日ぞおはしまし【　】〈3〉かし。",
+  q:"文中の空欄には過去の助動詞「き」が入る。最も適当な形の組み合わせを選べ。",
+  opts:["1:しか　2:き　3:し","1:き　2:き　3:し","1:しか　2:し　3:き","1:し　2:き　3:しか"],
+  a:1, why:"1「こそ」の結びで已然形、2文末の終止形、3「ぞ」の結びで連体形。"},
+ {no:"34", src:"青山学院大", c:"◎", body:"恋すてふ我が名はまだき立ちにけり人知れずこそ思ひそめ【　】",
+  q:"歌中の空欄に入る語を選べ。",
+  opts:["ア　けり","イ　ける","ウ　けむ","エ　しか","オ　なむ"],
+  a:4, why:"「こそ」の結びで「き」の已然形「しか」。"},
+ {no:"35", src:"早稲田大", c:"◎", body:"濁る瀬はしばしばかりぞみづ【し】あらば澄みなむとこそ頼み渡らめ",
+  q:"傍線部と同じ品詞の語をあとから選べ。",
+  opts:["イ　一門の運命【はや】尽きはて候ふ。","ロ　行く川の流れは絶えずして、【しかも】もとの水にあらず。","ハ　今は昔、竹取の翁といふものあり【けり】。","ニ　水を【だに】咽へ入れ給はず。","ホ　あな【う】。そらごとと思しめすか。"],
+  a:4, why:"「水しあらば」の「し」は強意の副助詞。ニ「だに」も副助詞。イ「はや」は副詞、ロ「しかも」は接続詞、ハ「けり」は助動詞、ホ「う」は形容詞「憂し」の語幹。"}
+]},
+{g:"つ・ぬ", items:[
+ {no:"36", src:"法政大", c:"◎", body:"弓馬の道まれなるばかり得【て】し人あらば、",
+  q:"傍線部「て」の文法上の説明として適当なものを選べ。",
+  opts:["動詞の活用語尾","形容動詞の活用語尾","副詞","助動詞","助詞"],
+  a:4, why:"下二段「得」の連用形「え」＋完了「つ」の連用形「て」＋過去「き」の連体形「し」。"},
+ {no:"37", src:"関西学院大", c:"◎", body:"予が居たりし所も奪はれて座し居【つ】べくもあらず。",
+  q:"傍線部「つべく」の「つ」の助動詞の用法として適当なものを選べ。",
+  opts:["イ　過去","ロ　推量","ハ　強意","ニ　勧誘","ホ　尊敬"],
+  a:3, why:"下に推量系「べし」を伴う強意（確述用法）。"},
+ {no:"38-1", src:"東北大", conv:true, c:"◎", body:"・南も北も、とり用ふるやうにはあら【ぬ】〈ア〉ものなり。\n・わが心にも慢ずるきざし出できて、せひに思ふ心もうすくなり【ぬ】〈イ〉。",
+  q:"傍線部アの助動詞の終止形と文法的意味の組み合わせを選べ。",
+  opts:["終止形「ず」・打消","終止形「ぬ」・完了","終止形「ぬ」・打消","終止形「ず」・完了"],
+  a:1, why:"体言「もの」に続く打消「ず」の連体形。"},
+ {no:"38-2", src:"東北大", conv:true, c:"◎", body:"・南も北も、とり用ふるやうにはあら【ぬ】〈ア〉ものなり。\n・わが心にも慢ずるきざし出できて、せひに思ふ心もうすくなり【ぬ】〈イ〉。",
+  q:"傍線部イの助動詞の終止形と文法的意味の組み合わせを選べ。",
+  opts:["終止形「ず」・打消","終止形「ぬ」・完了","終止形「ぬ」・打消","終止形「ず」・完了"],
+  a:2, why:"連用形「なり」に付く完了「ぬ」の終止形。"},
+ {no:"39", src:"同志社大", c:"◎", body:"「いづこや、いたう暮れ【ぬ】ほどぞよからむ。中納言は、まだ参らせたまはふにや」",
+  q:"傍線部「ぬ」について、文法的意味・用法が同じものを選べ。",
+  opts:["暮れぬれば参り【ぬ】。","咲き【ぬ】べきほどの梢","はや舟に乗れ。日も暮れ【ぬ】。","ものは少し覚ゆれど、腰なむ動かれ【ぬ】。","白波の上に漂ひ、浮き【ぬ】沈みぬ揺られければ"],
+  a:4, why:"体言「ほど」に続く打消の連体形（まだひどく暗くならないうち）。4は「なむ」の結びで打消の連体形。他は完了。"}
+]},
+{g:"たり（完了）", items:[
+ {no:"40", src:"関西大", c:"◎", body:"さてこの源三位入道頼政、この人一期の高名と覚えしことは、近衛院御在位の時、主上夜な夜な怯え魂ぎらせ給ふ（気絶なさる）事ありけり。御悩は丑の刻ばかりでありけるに、東三条の森の方より、黒雲一叢立ち来て御殿の上に覆へば、必ず怯えさせ給ひけり。先例により、武士に仰せて警固あるべしとて、源平両家のつはものどもの中を選ばせられけるに、頼政を選び出だされ【たり】〈ア〉けるとぞ聞えし。その時はいまだ兵庫守にてありけるが、召に応じて参内す。頼政は頼みきつ【たる】〈イ〉郎等遠江国住人猪早太ただ一人をぞ具し【たり】〈ウ〉ける。日頃人の申ししに違はず、御悩の刻限に及んで、東三条の森の方より、黒雲一叢立ち来て、御殿の上にたなびい【たり】〈エ〉。頼政きつと見上げ【たれ】〈オ〉ば、雲の中にあやしき姿あり。南無八幡大菩薩と、心の内に祈念して、よつ引いてひやうど射る。手ごたへしてはたとあたる。「得たり、をう」と矢叫びをこそし【たり】〈カ〉けれ。猪早太つつと寄り、落つるところを取つて押へて、続けさまに九刀ぞ刺い【たり】〈キ〉ける。その時上下手手火を点いて、これを御覧じ見給ふに、頭は猿、躯は狸、尾は蛇、手足は虎の姿なり。なく声鵼にぞ似【たり】〈ク〉ける。主上御感の余りに、獅子王といふ御剣を下されけり。…頃は四月十日あまりのことなれば、雲居にほととぎす二声三声音づれてぞ通りける。その時左大臣殿、「ほととぎす名をも雲居に上ぐるかな」と仰せられかけ【たり】〈ケ〉ければ、頼政右の膝をつき、左の袖を広げ、月を少し側目にかけつつ、「弓張月のいるにまかせて」と仕り、御剣を賜つて罷り出づ。「弓矢を取つてならびなきのみならず、歌道もすぐれ【たり】〈コ〉」とぞ、君も臣も御感ありける。",
+  q:"完了の助動詞「たり」は、本来「てあり」のつづまったもので、「てある」「ている」のように動作・作用の継続や結果の残存ないし状態を表すこともある。ア〜コの十個の「たり」（活用形の区別を問わない）のうち、「てある」「ている」と訳す方がふさわしいものを四つ選ぶとすれば、その組み合わせはどれがよいか。",
+  opts:["アイウキ","アウカク","アエオケ","アオカケ","イウクコ","イエキケ","イカキコ","ウエクコ","エオカコ","オキクケ"],
+  a:5, why:"存続は イ「頼みきつたる」（頼みにしている）、ウ「具したりける」（連れていた）、ク「似たりける」（似ている）、コ「すぐれたり」（すぐれている）。他は動作の完了。"}
+]},
+{g:"けむ", items:[
+ {no:"41", src:"甲南大", conv:true, c:"◎", body:"それもきのふけふの世間なれば、諸事にむつかしくやあり【けむ】、たたけどもたたけども音もせず。",
+  q:"傍線部に用いられている助動詞の文法的意味を選べ。",
+  opts:["過去推量","過去の原因推量","過去の伝聞・婉曲","現在推量"],
+  a:1, why:"疑問の係助詞「や」を伴うが疑問語はなく、「何事も面倒だったのだろうか」の過去推量。"},
+ {no:"42", src:"関東学院大", conv:true, c:"◎", body:"いづれの年にや、栖を此境に移す時、芭蕉一もとを植う。風土芭蕉の心にやかなひ【けん】、数珠の茎を備え、其葉茂りかさなりて庭を狭め、萱が軒端もかくるばかりなり。人呼て草庵の名とす。",
+  q:"傍線部の文法的説明と、これと関連のある係助詞の組み合わせを選べ。",
+  opts:["過去推量の助動詞「けむ」の連体形・係助詞「や」","過去推量の助動詞「けむ」の終止形・係助詞「や」","過去推量の助動詞「けむ」の已然形・係助詞「こそ」","過去の助動詞「けり」の未然形＋推量の助動詞「む」・係助詞「や」"],
+  a:1, why:"係助詞「や」の結びで連体形。「けむ」は一語の助動詞。"},
+ {no:"43", src:"立命館大", conv:true, c:"◎", body:"我ながら心弱くおぼえつつ、逢坂の関と聞けば、「宮も藁屋も果てしなく」と詠め過し【　】蝉丸のすみかも、関の清水にやどる我が面影は出で立つ足許よりうちはじめ、ならはぬ旅の装ひいとあはれにて、休らはるるに…",
+  q:"空欄に入る助動詞として最も適当なものを選べ。",
+  opts:["けむ","けめ","らむ","まし"],
+  a:1, why:"「過し（過ぐし）」は連用形なので連用形接続、下に体言「蝉丸」が続くので連体形。蝉丸の事跡を伝え聞く過去伝聞・婉曲の「けむ」。「けめ」は已然形、「らむ」は終止形接続、「まし」は未然形接続。"}
+]},
+{g:"らむ", items:[
+ {no:"44", src:"同志社大", c:"◎", body:"況んや、おとれ【らん】身にて褒美、なかなかかたはらいたかるべし。",
+  q:"傍線部「らん」と同じ意味・用法のものを選べ。",
+  opts:["筑紫の国に湯あみにまから【む】。","生け【らん】ほどは武にほこるべからず。","思はむ子を法師になした【らむ】こそ心ぐるしけれ。","白露の色はひとつをいかにして秋のこのはをちぢにそむ【らむ】","言はむかたなくむくつけげなる物出で来て、食ひかから【ん】としき。"],
+  a:2, why:"「おとれらん」は四段已然形＋存続「り」の未然形「ら」＋婉曲「む」。2「生けらん」も同じ構造。4は現在推量「らむ」一語。"},
+ {no:"45", src:"國學院大", c:"◎", body:"御供の人々さし寄りて、「いかなる人の途絶えを恨み給ひてか、かう時雨に濡れてはしも参り給へ【らむ】」など言ひて…",
+  q:"傍線部の口語訳として最もふさわしいものを選べ。",
+  opts:["ア　お会い申し上げるのだろう","イ　お参り申し上げるのだろう","ウ　おでかけなさったのだろう","エ　お会いなさったのだろう","オ　お参りしていらっしゃるのだろう","カ　おでかけしていらっしゃるのだろう"],
+  a:5, why:"「給へ」（已然形）＋存続「り」の未然形「ら」＋推量「む」で「〜していらっしゃるのだろう」。"},
+ {no:"46", src:"埼玉大", c:"◎", body:"「筑紫に御領多く侍れば、漢竹の笛の、事よろしく侍らん一つ召して給は【らん】〈イ〉。これ、身に取りてきはまれる望みにて侍れど、あやしの身には得がたき物にて、年来えまうけ侍らず」と云ふ。\n思ひの外に、いとあはれに覚えて、「いといとやすき事にこそ。速かに尋ねて、奉るべし。其の外、御用な【らん】〈ロ〉事は侍らずや。月日を送り給ふ【らん】〈ハ〉事も心にくからずこそ侍るに、などかは承らざ【らん】〈ニ〉」と云へば…",
+  q:"傍線部イ〜ニの中から助動詞一語のものを選べ。",
+  opts:["イ","ロ","ハ","ニ"],
+  a:3, why:"終止形「給ふ」に付くハのみ現在推量「らむ」一語。イは動詞語尾＋「む」、ロは断定「なり」未然形＋「む」、ニは打消「ず」未然形＋「む」。"}
+]},
+{g:"なり・めり", items:[
+ {no:"47", src:"立教大", c:"◎", body:"とかくおぼしたまふほどに、やうやう御さかりのほどにも、なりゆくにつけて、いとどあかぬ所なく光り添ひたまふぞ、げに見るかひあ【める】。",
+  q:"次の傍線部の助動詞の意味を選べ。",
+  opts:["伝聞","断定","完了","推定","自発"],
+  a:4, why:"「あめる」は「あるめる」の撥音無表記で、推定「めり」の連体形（「ぞ」の結び）。"},
+ {no:"48", src:"山口大", conv:true, c:"◎", body:"もろともなる人の所に帰りて、ものなどものするほどに、ある者ども、「この乾の方に火なむ見ゆるを、出でて見よ」など言ふ【なれ】ば、「唐土ぞ」など言ふなり。",
+  q:"傍線部の助動詞の文法的説明として最も適当なものを選べ。",
+  opts:["伝聞推定の助動詞「なり」の已然形","断定の助動詞「なり」の已然形","伝聞推定の助動詞「なり」の連体形","断定の助動詞「なり」の連体形"],
+  a:1, why:"終止形「言ふ」に付く伝聞推定「なり」。「ば」に続く已然形。"}
+]},
+{g:"べし・まじ", items:[
+ {no:"49", src:"青山学院大", c:"◎", body:"いづれにも、心ざし浅く、稽古工夫おろそかなる不堪無智の人の、けだかう幽遠の理離れたる境、おぼろげにも知る【べき】にあらずとなむ。",
+  q:"傍線部にある助動詞「べき（べし）」と同じ意味の「べし」を含む文を選べ。",
+  opts:["ア　舟に乗るべき所へわたる","イ　物ひと言ひおくべきことあり","ウ　家の作りやうは夏をむねとすべし","エ　今の世の人のよみぬべきことがらとは見えず","オ　をとこわづらひて心地死ぬべくおぼえけり"],
+  a:1, why:"本文は「知ることができない」の可能。アも「舟に乗ることができる所」で可能。鎌倉期以降の可能の「べし」は、必ずしも打消を伴わない。イ当然、ウ適当、エ当然、オ推量。"},
+ {no:"50", src:"大阪市立大", conv:true, c:"◎", body:"その人ならば、くるしかる【まじ】。入れ申せ。",
+  q:"傍線部の現代語訳として最も適当なものを選べ。",
+  opts:["差し支えないはずがない","差し支えないだろう","苦しめてはならない","苦しむことはできない"],
+  a:2, why:"打消推量「まじ」。「くるし」は「差し支えがある」。"},
+ {no:"51-1", src:"富山大", c:"◎", body:"〈a〉白河院の御時、九重の塔の金物を、牛の皮にて作れりといふこと、世に聞えて、修理したる人、定綱朝臣ことにあふ【べき】由、聞えたり。\n〈b〉「身のあればこそ、君にも仕へ奉れ。肝心失せて、黒白見分く【べき】心地も侍らず」といひもやらず、わななきけり。",
+  q:"傍線部aの助動詞の意味を選べ。",
+  opts:["推量","意志","可能","命令","適当"],
+  a:1, why:"「定綱朝臣がきっと処罰にあうだろう」という世間の噂で推量。"},
+ {no:"51-2", src:"富山大", c:"◎", body:"〈a〉白河院の御時、九重の塔の金物を、牛の皮にて作れりといふこと、世に聞えて、修理したる人、定綱朝臣ことにあふ【べき】由、聞えたり。\n〈b〉「身のあればこそ、君にも仕へ奉れ。肝心失せて、黒白見分く【べき】心地も侍らず」といひもやらず、わななきけり。",
+  q:"傍線部bの助動詞の意味を選べ。",
+  opts:["推量","意志","可能","命令","適当"],
+  a:3, why:"打消を伴う可能（見分けることができない）。"},
+ {no:"52", src:"名城大", c:"◎", body:"かくしつつ世は尽きぬべきにやと思さるるに、そのまたの日の暁より風いみじう吹き、潮高う満ちて、波の音荒きこと、巌も山も残る【まじき】けしきなり。",
+  q:"次の傍線部の文法的説明を選べ。",
+  opts:["文法上の区分でいえば、打消の形容詞である。","打消の推量を表す助動詞「まじ」の連用形である。","「まじき」の「き」は過去の助動詞「き」の連体形である。","打消の推量を表す助動詞「まじ」の連体形である。","打消の意志を表す助動詞「まじ」の連体形である。"],
+  a:4, why:"体言「けしき」に続く打消推量の連体形（残らないだろう）。"}
+]},
+{g:"り", items:[
+ {no:"53", src:"金城学院大短大部", c:"◎", body:"めづらしければにや、はじめの人よりは志深くおぼえて、人目もつつまず通ひにければ、親聞きつけて、「年ごろの人を持ち給へ【れ】ども、いかがはせむ」とて、許し住ます。",
+  q:"傍線部の文法的説明として最も適切なものを選べ。",
+  opts:["ア　動詞の活用語尾","イ　ていねいを表わす動詞","ウ　尊敬を表わす動詞","エ　尊敬の助動詞","オ　存続の助動詞"],
+  a:5, why:"四段「給ふ」の已然形（エ段）に付く存続「り」の已然形。"},
+ {no:"54", src:"センター試験", c:"◎", body:"この家主は財に富め【る】長者なれば、我がともがら、皆ここに集まりつどふ。さるを、窮鬼、などてこのあたりに近づき来し。",
+  q:"傍線部の「る」と同じ「る」を一つ選べ。",
+  opts:["冬はいかなる所にも住ま【る】","嘆けとて月やは物は思はす【る】","憂かりけ【る】人を初瀬の山おろしよ","風の音にぞおどろかれぬ【る】","ただ有明の月ぞ残れ【る】"],
+  a:5, why:"四段已然形（エ段）に付く存続「り」の連体形。"}
+]}
+];
+
+const JD_ALL = [];
+JD.forEach(g => g.items.forEach(it => JD_ALL.push({g:g.g, d:it})));
+
 /* ==================== 共通 ==================== */
 const KANSUJI = ["一","二","三","四","五","六","七","八"];
 const STORE_KEY = "genkokan-app-best-v1";
@@ -493,9 +798,14 @@ function renderHome(){
         <span class="d">句切れ・掛詞・枕詞・序詞・縁語・本歌取り</span>
         <span class="n">百人一首ほか　全70問</span>
       </button>
+      <button class="gate" data-go="jodo">
+        <span class="t mincho">助動詞</span>
+        <span class="d">る・らる から り まで、識別と意味</span>
+        <span class="n">大学入試過去問　全${JD_ALL.length}問</span>
+      </button>
     </div>`;
   stage.querySelectorAll("[data-go]").forEach(b => {
-    b.addEventListener("click", () => b.dataset.go === "goi" ? renderGoiHome() : renderWakaHome());
+    b.addEventListener("click", () => ({goi:renderGoiHome, waka:renderWakaHome, jodo:renderJodoHome})[b.dataset.go]());
   });
 }
 
@@ -573,7 +883,49 @@ function renderWakaHome(){
   document.getElementById("tohome").addEventListener("click", renderHome);
 }
 
+/* ==================== 助動詞 一覧 ==================== */
+function renderJodoHome(){
+  clearTimer(); state = null; area = "jodo"; crumb.textContent = "助動詞";
+  const best = loadBest();
+  const cards = JD.map((g,i) => {
+    const b = best[`jodo-${i}`];
+    return `<button class="setcard" data-jd="${i}">
+      <span class="no mincho">${esc(g.g)}</span>
+      <span class="range">全${g.items.length}問</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${g.items.length}`}</span>
+    </button>`;
+  }).join("");
+  const eb = best["jodo-exam"];
+  stage.innerHTML = `
+    <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="setgrid tight">${cards}</div>
+      <button class="examcard" id="exam">
+        <span style="display:flex;flex-direction:column;gap:1px;">
+          <span class="t mincho">通しテスト</span>
+          <span class="d">全${JD_ALL.length}問から20問を無作為抽出　18問以上で合格</span>
+        </span>
+        <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb} / ${EXAM_N}`}</span>
+      </button>
+      <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
+    </div>`;
+  stage.querySelectorAll("[data-jd]").forEach(b => b.addEventListener("click", () => startJdSec(Number(b.dataset.jd))));
+  document.getElementById("exam").addEventListener("click", startJdExam);
+  document.getElementById("tohome").addEventListener("click", renderHome);
+}
+
 /* ==================== 出題キューの組み立て ==================== */
+function jq(gname, it){ return {t:"jd", d:it, sec:gname}; }
+function startJdSec(gi){
+  const g = JD[gi];
+  state = newState({area:"jodo", kind:"set", secId:gi, title:g.g, key:`jodo-${gi}`,
+                    queue: shuffle(g.items).map(it => jq(g.g, it))});
+  renderQuestion();
+}
+function startJdExam(){
+  state = newState({area:"jodo", kind:"exam", title:"通しテスト", key:"jodo-exam",
+                    queue: shuffle(JD_ALL).slice(0,EXAM_N).map(x => jq(x.g, x.d))});
+  renderQuestion();
+}
 function vq(word){ return {t:"vocab", w:word}; }
 function wq(sec, item){ return {t:sec.type, d:item, sec:sec.name}; }
 
@@ -621,24 +973,65 @@ function frame(inner){
       </div>
       <div class="track"><i style="width:${(state.i/total)*100}%"></i></div>
       ${inner}
+      <div class="actions" id="submitbar"><button class="btn primary" id="submit" disabled>解答する</button></div>
       <div id="after"></div>
     </div>`;
 }
-function choiceList(items){
-  return `<div class="choices">${items.map((c,k) =>
+function group(name, items, wordCls){
+  return `<div class="choices" data-group="${name}">${items.map((c,k) =>
     `<button class="choice" data-v="${esc(c.v)}" data-k="${k}">
        <span class="mark">${k+1}</span>
-       <span class="word">${c.h}</span>
+       <span class="word${wordCls ? " " + wordCls : ""}">${c.h}</span>
      </button>`).join("")}</div>`;
 }
-function bindChoices(handler){
-  stage.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => handler(b.dataset.v, b)));
+
+/* 選択：確定するまで何度でも選び直せる */
+function bindGroups(need, multi){
+  state.sel = {}; state.need = need; multi = multi || [];
+  stage.querySelectorAll("[data-group]").forEach(gEl => {
+    const name = gEl.dataset.group;
+    gEl.querySelectorAll(".choice, .gap, .chip").forEach(b => b.addEventListener("click", ev => {
+      ev.stopPropagation();
+      if (state.answered) return;
+      if (multi.includes(name)){
+        b.classList.toggle("on");
+        const vs = [...gEl.querySelectorAll(".on")].map(x => x.dataset.v);
+        if (vs.length) state.sel[name] = vs; else delete state.sel[name];
+      } else {
+        gEl.querySelectorAll(".on").forEach(x => x.classList.remove("on"));
+        b.classList.add("on");
+        state.sel[name] = b.dataset.v;
+      }
+      gEl.querySelectorAll(".gap").forEach(x => { x.textContent = x.classList.contains("on") ? "／" : "・"; });
+      document.getElementById("submit").disabled = !state.need.every(n => state.sel[n] !== undefined);
+    }));
+  });
+}
+function onSubmit(fn){
+  document.getElementById("submit").addEventListener("click", ev => {
+    ev.stopPropagation();
+    if (state.answered || document.getElementById("submit").disabled) return;
+    document.getElementById("submitbar").remove();
+    fn(state.sel);
+  });
+}
+function paintGroup(name, right, picked){
+  const R = [].concat(right).map(String), P = [].concat(picked === undefined ? [] : picked).map(String);
+  stage.querySelectorAll(`[data-group="${name}"] .choice, [data-group="${name}"] .chip`).forEach(b => {
+    const v = b.dataset.v, chip = b.classList.contains("chip");
+    b.disabled = true; b.classList.remove("on");
+    if (R.includes(v)) b.classList.add(chip ? (P.includes(v) ? "right" : "miss") : "is-right");
+    else if (P.includes(v)) b.classList.add(chip ? "bad" : "is-wrong");
+    else if (!chip) b.classList.add("is-dim");
+  });
 }
 
 function renderQuestion(){
-  state.answered = false; state.stage = 1; state.pick1 = null; state.sel = [];
+  clearTimer();
+  state.answered = false; state.sel = {}; state.need = [];
   const q = state.queue[state.i];
-  ({vocab:rVocab, kugire:rKugire, kake:rKake, lead:rLead, jo:rJo, engo:rEngo, tech:rTech})[q.t](q);
+  ({vocab:rVocab, kugire:rKugire, kake:rKake, lead:rLead, jo:rJo, engo:rEngo, tech:rTech, jd:rJd})[q.t](q);
+  window.scrollTo(0, 0);
 }
 
 /* --- 語彙 --- */
@@ -654,61 +1047,53 @@ function rVocab(q){
       <div class="label">${VMODES[vmode].prompt}</div>
       <p class="body">${body}</p>
     </div>
-    ${choiceList(opts)}`);
-  bindChoices(v => {
-    const ok = Number(v) === w.n;
-    paintChoices(String(w.n), v);
+    ${group("main", opts)}`);
+  bindGroups(["main"]);
+  onSubmit(sel => {
+    paintGroup("main", w.n, sel.main);
     const extra = vmode === "cloze"
       ? `<span class="filled">${esc(w.s).replace("［　］", "<em>"+esc(w.w)+"</em>")}</span>` : "";
-    finish(ok, `${extra}<span class="gloss"><b>${esc(w.w)}</b>${w.y ? "（"+w.y+"）" : ""}　${esc(w.m)}</span>`);
+    finish(Number(sel.main) === w.n, `${extra}<span class="gloss"><b>${esc(w.w)}</b>${w.y ? "（"+w.y+"）" : ""}　${esc(w.m)}</span>`);
   });
 }
 
-/* --- 句切れ（二段） --- */
+/* --- 句切れ：切れ目と根拠を選んでから解答 --- */
 function rKugire(q){
   const d = q.d;
-  let html = '<p class="waka">';
+  let waka = '<p class="waka" data-group="gap">';
   d.k.forEach((ku,i) => {
-    html += `<span class="ku">${esc(ku)}</span>`;
-    if (i < 4) html += `<button class="gap" data-g="${i}">・</button>`;
+    waka += `<span class="ku">${esc(ku)}</span>`;
+    if (i < 4) waka += `<button class="gap" data-v="${i}" aria-label="${i+1}句と${i+2}句の間">・</button>`;
   });
-  html += "</p>";
+  waka += "</p>";
+  const why = KUGIRE_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
   stage.innerHTML = frame(`
     <div class="prompt">
       <div class="label">句切れの位置をタップ</div>
-      ${html}
-    </div>`);
-  stage.querySelectorAll(".gap").forEach(b => b.addEventListener("click", () => {
-    state.pick1 = Number(b.dataset.g);
-    stage.querySelectorAll(".gap").forEach(x => { x.disabled = true; x.textContent = "・"; x.classList.remove("on"); });
-    b.classList.add("on"); b.textContent = "／";
-    kugireStage2(q);
-  }));
-}
-function kugireStage2(q){
-  const d = q.d;
-  const opts = KUGIRE_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
-  document.getElementById("after").innerHTML = `
-    <div class="fade" style="display:flex;flex-direction:column;gap:12px;">
-      <div class="sectitle">そう判断した根拠は</div>
-      ${choiceList(opts)}
-    </div>`;
-  bindChoices(v => {
-    const ok = (state.pick1 === d.at) && (v === d.m);
-    paintChoices(d.m, v);
+      ${waka}
+    </div>
+    <div class="sectitle">そう判断した根拠は</div>
+    ${group("why", why)}`);
+  bindGroups(["gap","why"]);
+  onSubmit(sel => {
     stage.querySelectorAll(".gap").forEach(x => {
-      if (Number(x.dataset.g) === d.at){ x.classList.add("ansmark"); x.textContent = "／"; }
+      x.disabled = true; x.classList.remove("on");
+      const g = Number(x.dataset.v);
+      if (g === d.at){ x.classList.add("ansmark"); x.textContent = "／"; }
+      else if (String(g) === sel.gap){ x.classList.add("ng"); x.textContent = "／"; }
+      else x.textContent = "・";
     });
-    finish(ok, `<span class="gloss"><b>${KUGIRE_NAME[d.at]}</b>　${d.m}　${esc(d.w)}</span>`);
+    paintGroup("why", d.m, sel.why);
+    finish(Number(sel.gap) === d.at && sel.why === d.m,
+      `<span class="gloss"><b>${KUGIRE_NAME[d.at]}</b>　${d.m}　${esc(d.w)}</span>`);
   });
 }
 
 /* --- 掛詞 --- */
 function rKake(q){
   const d = q.d;
-  const others = KAKE.filter(x => !(x.a === d.a && x.b === d.b));
   const picked = []; const seen = new Set([d.a + d.b]);
-  shuffle(others).forEach(x => {
+  shuffle(KAKE).forEach(x => {
     if (picked.length < 3 && !seen.has(x.a + x.b)){ seen.add(x.a + x.b); picked.push(x); }
   });
   const opts = shuffle([d, ...picked]).map(x => ({v:x.a + "／" + x.b, h:`${esc(x.a)} と ${esc(x.b)}`}));
@@ -717,11 +1102,12 @@ function rKake(q){
       <div class="label">傍線部の掛詞に掛けられた二つの意味は</div>
       <p class="body">${mark(d.p,"hl")}</p>
     </div>
-    ${choiceList(opts)}`);
-  bindChoices(v => {
+    ${group("main", opts)}`);
+  bindGroups(["main"]);
+  onSubmit(sel => {
     const right = d.a + "／" + d.b;
-    paintChoices(right, v);
-    finish(v === right, `<span class="gloss"><b>${esc(d.k)}</b>　……　${esc(d.a)} と ${esc(d.b)}</span>`);
+    paintGroup("main", right, sel.main);
+    finish(sel.main === right, `<span class="gloss"><b>${esc(d.k)}</b>　……　${esc(d.a)} と ${esc(d.b)}</span>`);
   });
 }
 
@@ -734,54 +1120,41 @@ function rLead(q){
       <div class="label">傍線部の枕詞が導いている語は</div>
       <p class="body">${mark(d.p,"hl")}</p>
     </div>
-    ${choiceList(opts)}`);
-  bindChoices(v => {
-    paintChoices(d.ans, v);
-    finish(v === d.ans,
+    ${group("main", opts)}`);
+  bindGroups(["main"]);
+  onSubmit(sel => {
+    paintGroup("main", d.ans, sel.main);
+    finish(sel.main === d.ans,
       `<span class="gloss">導いている語　<b>${esc(d.ans)}</b></span>` +
       (d.note ? `<span class="note">※${esc(d.note)}</span>` : ""));
   });
 }
 
-/* --- 序詞（二段） --- */
+/* --- 序詞：導く語と基準を選んでから解答 --- */
 function rJo(q){
   const d = q.d;
-  const opts = shuffle([d.ans, ...d.d]).map(x => ({v:x, h:esc(x)}));
+  const words = shuffle([d.ans, ...d.d]).map(x => ({v:x, h:esc(x)}));
+  const why = JO_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
   stage.innerHTML = frame(`
     <div class="prompt">
-      <div class="label">網掛けの序詞が導いている語は</div>
+      <div class="label">網掛けの序詞が導いている語と、序詞と判断する基準を選ぶ</div>
       <p class="body">${mark(d.p,"jo")}</p>
     </div>
-    ${choiceList(opts)}`);
-  bindChoices(v => {
-    state.pick1 = v;
-    paintChoices(d.ans, v);
-    joStage2(q);
-  });
-}
-function joStage2(q){
-  const d = q.d;
-  const opts = JO_WHY.map(x => ({v:x.m, h:`${x.m}　<small>${x.t}</small>`}));
-  document.getElementById("after").innerHTML = `
-    <div class="fade" style="display:flex;flex-direction:column;gap:12px;">
-      <div class="sectitle">序詞と判断する基準は</div>
-      ${choiceList(opts)}
-    </div>`;
-  bindChoices(v => {
-    const ok = (state.pick1 === d.ans) && (v === d.m);
-    document.querySelectorAll("#after .choice").forEach(b => {
-      b.disabled = true;
-      if (b.dataset.v === d.m) b.classList.add("is-right");
-      else if (b.dataset.v === v) b.classList.add("is-wrong");
-      else b.classList.add("is-dim");
-    });
-    finish(ok,
+    <div class="sectitle">導いている語</div>
+    ${group("word", words)}
+    <div class="sectitle">判断する基準</div>
+    ${group("why", why)}`);
+  bindGroups(["word","why"]);
+  onSubmit(sel => {
+    paintGroup("word", d.ans, sel.word);
+    paintGroup("why", d.m, sel.why);
+    finish(sel.word === d.ans && sel.why === d.m,
       `<span class="gloss">導いている語　<b>${esc(d.ans)}</b>　／　${d.m}　${esc(d.w)}</span>` +
       (d.note ? `<span class="note">※${esc(d.note)}</span>` : ""));
   });
 }
 
-/* --- 縁語（複数選択） --- */
+/* --- 縁語：複数選択 --- */
 function rEngo(q){
   const d = q.d;
   const chips = shuffle([...d.e, ...d.x]);
@@ -791,25 +1164,12 @@ function rEngo(q){
       <p class="body">${esc(d.p)}</p>
       <p class="sub">中心語　<b>${esc(d.c)}</b></p>
     </div>
-    <div class="chips">${chips.map(c => `<button class="chip" data-v="${esc(c)}">${esc(c)}</button>`).join("")}</div>
-    <div class="actions"><button class="btn primary" id="grade" disabled>採点する</button></div>`);
-  const grade = document.getElementById("grade");
-  stage.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
-    b.classList.toggle("on");
-    grade.disabled = stage.querySelectorAll(".chip.on").length === 0;
-  }));
-  grade.addEventListener("click", () => {
-    const sel = [...stage.querySelectorAll(".chip.on")].map(b => b.dataset.v);
-    const ok = sel.length === d.e.length && d.e.every(x => sel.includes(x));
-    stage.querySelectorAll(".chip").forEach(b => {
-      b.disabled = true;
-      const isE = d.e.includes(b.dataset.v), on = b.classList.contains("on");
-      b.classList.remove("on");
-      if (isE && on) b.classList.add("right");
-      else if (isE) b.classList.add("miss");
-      else if (on) b.classList.add("bad");
-    });
-    grade.remove();
+    <div class="chips" data-group="chips">${chips.map(c => `<button class="chip" data-v="${esc(c)}">${esc(c)}</button>`).join("")}</div>`);
+  bindGroups(["chips"], ["chips"]);
+  onSubmit(sel => {
+    const picked = sel.chips || [];
+    paintGroup("chips", d.e, picked);
+    const ok = picked.length === d.e.length && d.e.every(x => picked.includes(x));
     finish(ok, `<span class="gloss"><b>${esc(d.c)}</b>　……　${d.e.map(esc).join("・")}</span>`);
   });
 }
@@ -823,37 +1183,75 @@ function rTech(q){
       <div class="label">この和歌に用いられている修辞技法は</div>
       <p class="body">${esc(stripMark(d.p))}</p>
     </div>
-    ${choiceList(opts)}`);
-  bindChoices(v => {
-    paintChoices(d.ans, v);
-    finish(v === d.ans, `<span class="gloss"><b>${esc(d.ans)}</b>　${esc(d.w)}</span>`);
+    ${group("main", opts)}`);
+  bindGroups(["main"]);
+  onSubmit(sel => {
+    paintGroup("main", d.ans, sel.main);
+    finish(sel.main === d.ans, `<span class="gloss"><b>${esc(d.ans)}</b>　${esc(d.w)}</span>`);
+  });
+}
+
+/* --- 助動詞：本文は全文、選択肢は原典の順のまま --- */
+function jdMark(t){
+  return esc(t)
+    .replace(/【(.*?)】/g, '<span class="bs">$1</span>')
+    .replace(/〈(.*?)〉/g, '<span class="lb">$1</span>')
+    .replace(/\n/g, "<br>");
+}
+function jdAnswer(d){ return Array.isArray(d.a) ? d.a : [d.a]; }
+function jdFeedback(d){
+  const ans = jdAnswer(d);
+  const txt = ans.map(i => d.opts[i-1].replace(/[【】]/g, "")).join("／");
+  return `<span class="gloss">正答　<b>${ans.join("・")}</b>　${esc(txt)}</span>
+          <span class="why">${jdMark(d.why)}</span>`;
+}
+function rJd(q){
+  const d = q.d;
+  const opts = d.opts.map((o,i) => ({v:String(i+1), h:jdMark(o)}));
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="src">問${esc(d.no)}　${esc(d.src)}</div>
+      <p class="qtext">${esc(d.q)}</p>
+      <p class="body long">${jdMark(d.body)}</p>
+    </div>
+    ${d.multi ? `<div class="sectitle">あてはまるものをすべて選ぶ</div>` : ""}
+    ${group("main", opts, "sent")}`);
+  bindGroups(["main"], d.multi ? ["main"] : []);
+  onSubmit(sel => {
+    const ans = jdAnswer(d);
+    const picked = [].concat(sel.main).map(Number);
+    paintGroup("main", ans, picked);
+    const ok = picked.length === ans.length && ans.every(x => picked.includes(x));
+    finish(ok, jdFeedback(d));
   });
 }
 
 /* ==================== 採点と送り ==================== */
-function paintChoices(right, picked){
-  stage.querySelectorAll(".choice").forEach(b => {
-    b.disabled = true;
-    if (b.dataset.v === right) b.classList.add("is-right");
-    else if (b.dataset.v === picked) b.classList.add("is-wrong");
-    else b.classList.add("is-dim");
-  });
-}
+/* 正解：1秒で自動送り（タップで即送り）　誤答：「次の問題へ」を押すまで止める */
 function finish(ok, html){
   if (state.answered) return;
   state.answered = true;
   if (ok) state.correct++; else state.missed.push(state.queue[state.i]);
-  const wait = ok ? 1000 : 3000;
+  const last = state.i === state.queue.length - 1;
   document.getElementById("after").insertAdjacentHTML("beforeend", `
-    <div class="verdict ${ok ? "ok" : "ng"} fade" style="margin-top:14px;">
-      <span class="head mincho">${ok ? "正解" : "誤答"}<span class="tap">タップで次へ</span></span>
+    <div class="verdict ${ok ? "ok" : "ng"} fade">
+      <span class="head mincho">${ok ? "正解" : "誤答"}${ok ? '<span class="tap">タップで次へ</span>' : ""}</span>
       ${html}
-      <div class="countdown" style="--dur:${wait}ms"><i></i></div>
+      ${ok
+        ? `<div class="countdown" style="--dur:1000ms"><i></i></div>`
+        : `<div class="actions" style="margin-top:10px;"><button class="btn primary" id="next">${last ? "結果を見る" : "次の問題へ"}</button></div>`}
     </div>`);
-  const bar = stage.querySelector(".countdown");
-  if (bar) requestAnimationFrame(() => bar.classList.add("run"));
-  state.canSkipAt = Date.now() + 350;
-  state.timer = setTimeout(advance, wait);
+  const v = stage.querySelector(".verdict");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (v && v.scrollIntoView) v.scrollIntoView({block:"nearest", behavior: reduce ? "auto" : "smooth"});
+  if (ok){
+    const bar = stage.querySelector(".countdown");
+    if (bar) requestAnimationFrame(() => bar.classList.add("run"));
+    state.canSkipAt = Date.now() + 350;
+    state.timer = setTimeout(advance, 1000);
+  } else {
+    document.getElementById("next").addEventListener("click", ev => { ev.stopPropagation(); advance(); });
+  }
 }
 function clearTimer(){ if (state && state.timer){ clearTimeout(state.timer); state.timer = null; } }
 function advance(){
@@ -862,6 +1260,7 @@ function advance(){
   if (state.i === state.queue.length - 1) renderResult();
   else { state.i++; renderQuestion(); }
 }
+/* 正解時のみ、画面タップで待ち時間を飛ばす */
 document.addEventListener("click", () => {
   if (state && state.answered && state.timer && Date.now() >= state.canSkipAt) advance();
 });
@@ -875,6 +1274,10 @@ function missLabel(q){
   if (q.t === "lead")   return {w:d.ans, m:stripMark(d.p)};
   if (q.t === "jo")     return {w:d.ans + "　／　" + d.m, m:stripMark(d.p)};
   if (q.t === "engo")   return {w:d.c + "　……　" + d.e.join("・"), m:d.p};
+  if (q.t === "jd"){
+    const ans = jdAnswer(d);
+    return {w:`${q.sec}　${d.src}　正答 ${ans.join("・")}`, m:stripMark(d.body)};
+  }
   return {w:d.ans, m:stripMark(d.p)};
 }
 function renderResult(){
@@ -913,25 +1316,31 @@ function renderResult(){
   document.getElementById("again").addEventListener("click", () => {
     const wasExam = isExam || state.from === "exam";
     if (state.area === "goi") wasExam ? startGoiExam() : startGoiSet(state.setIndex);
-    else wasExam ? startWakaExam() : startWakaSec(state.secId);
+    else if (state.area === "waka") wasExam ? startWakaExam() : startWakaSec(state.secId);
+    else wasExam ? startJdExam() : startJdSec(state.secId);
   });
-  document.getElementById("list").addEventListener("click", () => state.area === "goi" ? renderGoiHome() : renderWakaHome());
+  document.getElementById("list").addEventListener("click", () =>
+    ({goi:renderGoiHome, waka:renderWakaHome, jodo:renderJodoHome})[state.area]());
 }
 
 /* ==================== キーボード ==================== */
+/* 数字キーで選択、Enterで「解答する」／「次の問題へ」 */
 document.addEventListener("keydown", e => {
   if (!state) return;
-  if (!state.answered && ["1","2","3","4"].includes(e.key)){
-    const btns = stage.querySelectorAll(".choice:not(:disabled)");
-    const b = btns[Number(e.key) - 1];
+  if (!state.answered && /^[1-9]$/.test(e.key)){
+    const b = stage.querySelectorAll(".choice:not(:disabled), .chip:not(:disabled)")[Number(e.key) - 1];
     if (b){ e.preventDefault(); b.click(); }
-  } else if (state.answered && state.timer && (e.key === "Enter" || e.key === " ")){
-    e.preventDefault(); advance();
+  } else if (e.key === "Enter"){
+    const s = document.getElementById("submit"), n = document.getElementById("next");
+    if (!state.answered && s && !s.disabled){ e.preventDefault(); s.click(); }
+    else if (n){ e.preventDefault(); n.click(); }
+    else if (state.answered && state.timer){ e.preventDefault(); advance(); }
   }
 });
 
 renderHome();
 </script>
+
 
 </body>
 </html>
