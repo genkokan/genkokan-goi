@@ -156,6 +156,22 @@
     color:var(--ink-soft); margin-left:10px; font-variant-numeric:tabular-nums;}
   .box{display:inline-block; border:1.5px solid var(--shu); border-radius:2px; padding:0 5px; margin:0 2px;
     font-weight:700; color:var(--shu);}
+  .conjtable{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  @media (max-width:430px){.conjtable{grid-template-columns:1fr;}}
+  .imilist{display:flex; flex-direction:column; gap:10px;}
+  .cell{display:flex; align-items:center; gap:8px; background:var(--paper);
+    border:1px solid var(--rule); border-radius:2px; padding:8px 10px;}
+  .cell .ck{flex:0 0 auto; font-size:12px; color:var(--ink-faint); min-width:3.6em; letter-spacing:.04em;}
+  .imilist .cell .ck{min-width:1.4em; text-align:center;}
+  .cin,.iin{flex:1 1 auto; min-width:0; font:inherit; font-family:"Shippori Mincho",serif; font-size:18px;
+    background:transparent; border:0; border-bottom:1.5px solid var(--rule); color:var(--ink); padding:4px 2px;}
+  .cin:focus,.iin:focus{outline:none; border-bottom-color:var(--ai);}
+  .cin.in-ok,.iin.in-ok{border-bottom-color:var(--shu); color:var(--shu);}
+  .cin.in-ng,.iin.in-ng{border-bottom-color:var(--ai); color:var(--ai);}
+  .fb{flex:0 0 auto; display:flex; align-items:center; gap:6px;}
+  .fb .mk{font-family:"Shippori Mincho",serif; font-size:16px; font-weight:700;}
+  .fb .mk.ok{color:var(--shu);} .fb .mk.ng{color:var(--ai);}
+  .fb .ans{font-family:"Shippori Mincho",serif; font-size:15px; color:var(--shu);}
   .verdict .why{font-size:13.5px; color:var(--ink); line-height:1.75;}
 
   /* 句切れ：和歌＋切れ目 */
@@ -978,6 +994,182 @@ const JDQ = JD.map(g => ({g:g.g, qs:mergeParts(g.items)}));
 const JD_ALL = [];
 JDQ.forEach(g => g.qs.forEach(q => JD_ALL.push({g:g.g, d:q})));
 
+/* 助動詞の稽古：活用表・意味・識別基準
+   conj＝［未然・連用・終止・連体・已然・命令］。各枠は許容する答えの配列。"○"＝その形なし
+   only:"conj" ＝ 活用表だけ（意味・識別基準は同じ組の代表で問うため）
+   jd＝この分野の最後に解く、既存の問題群（JDのグループ名） */
+const JDR = [
+{g:"る・らる", jd:"る・らる", units:[
+ {name:"る", kata:"下二段型", conj:[["れ"],["れ"],["る"],["るる"],["るれ"],["れよ"]],
+  pool:["格助詞「に」がある、または補える","主語が偉い人である","知覚動詞・心情語に付く","打消の語を伴う（平安期までは必ず）","下に体言を伴う"],
+  meanings:[
+   {n:"受身", acc:["受身","受け身"], k:"格助詞「に」がある、または補える"},
+   {n:"尊敬", acc:["尊敬"], k:"主語が偉い人である"},
+   {n:"可能", acc:["可能"], k:"打消の語を伴う（平安期までは必ず）"},
+   {n:"自発", acc:["自発"], k:"知覚動詞・心情語に付く"}]},
+ {name:"らる", kata:"下二段型", only:"conj",
+  conj:[["られ"],["られ"],["らる"],["らるる"],["らるれ"],["られよ"]]}
+]},
+{g:"す・さす・しむ", jd:"す・さす・しむ", units:[
+ {name:"す", kata:"下二段型", conj:[["せ"],["せ"],["す"],["する"],["すれ"],["せよ"]],
+  pool:["下に尊敬語を伴わない","下に尊敬語を伴い、主語が偉い人自身である","打消の語を伴う","下に体言を伴う"],
+  meanings:[
+   {n:"使役", acc:["使役"], k:"下に尊敬語を伴わない"},
+   {n:"尊敬", acc:["尊敬"], k:"下に尊敬語を伴い、主語が偉い人自身である"}]},
+ {name:"さす", kata:"下二段型", only:"conj",
+  conj:[["させ"],["させ"],["さす"],["さする"],["さすれ"],["させよ"]]},
+ {name:"しむ", kata:"下二段型", only:"conj",
+  conj:[["しめ"],["しめ"],["しむ"],["しむる"],["しむれ"],["しめよ"]]}
+]},
+{g:"ず", jd:"ず", units:[
+ {name:"ず", kata:"特殊型",
+  conj:[["ず","ざら"],["ず","ざり"],["ず"],["ぬ","ざる"],["ね","ざれ"],["ざれ"]],
+  meanings:[{n:"打消", acc:["打消","打ち消し","うちけし"]}]}
+]},
+{g:"む・むず", jd:"む・むず", units:[
+ {name:"む", kata:"四段型", conj:[["○"],["○"],["む"],["む"],["め"],["○"]],
+  pool:["一人称主語の場合に多い","二人称主語の場合に多い","三人称主語の場合に多い","下に「、」や体言を伴う","下に助詞を伴う"],
+  meanings:[
+   {n:"意志", acc:["意志"], k:"一人称主語の場合に多い"},
+   {n:"適当・勧誘", acc:["適当・勧誘","適当","勧誘","適当勧誘"], k:"二人称主語の場合に多い"},
+   {n:"推量", acc:["推量"], k:"三人称主語の場合に多い"},
+   {n:"婉曲", acc:["婉曲"], k:"下に「、」や体言を伴う"},
+   {n:"仮定", acc:["仮定"], k:"下に助詞を伴う"}]},
+ {name:"むず", kata:"サ変型", only:"conj",
+  conj:[["○"],["○"],["むず"],["むずる"],["むずれ"],["○"]]}
+]},
+{g:"じ", jd:"じ", units:[
+ {name:"じ", kata:"特殊型", conj:[["○"],["○"],["じ"],["じ"],["じ"],["○"]],
+  pool:["一人称主語の場合に多い","三人称主語の場合に多い","下に体言を伴う","打消の語を伴う"],
+  meanings:[
+   {n:"打消意志", acc:["打消意志","打ち消し意志","うちけしいし"], k:"一人称主語の場合に多い"},
+   {n:"打消推量", acc:["打消推量","打ち消し推量","うちけしすいりょう"], k:"三人称主語の場合に多い"}]}
+]},
+{g:"まし", jd:"まし", units:[
+ {name:"まし", kata:"特殊型",
+  conj:[["ましか","ませ"],["○"],["まし"],["まし"],["ましか"],["○"]],
+  pool:["「〜ば・せば・なば・ませば・ましかば」の条件句を伴う","疑問語（いかに・なに・や・か）を伴う","下に体言を伴う","主語が偉い人である"],
+  meanings:[
+   {n:"反実仮想", acc:["反実仮想"], k:"「〜ば・せば・なば・ませば・ましかば」の条件句を伴う"},
+   {n:"ためらいの意志", acc:["ためらいの意志","ためらい"], k:"疑問語（いかに・なに・や・か）を伴う"}]}
+]},
+{g:"まほし・たし", jd:"まほし", units:[
+ {name:"まほし", kata:"シク活用型",
+  conj:[["まほしから","まほしく"],["まほしかり","まほしく"],["まほし"],["まほしかる","まほしき"],["まほしけれ"],["○"]],
+  meanings:[{n:"願望", acc:["願望","希望"]}]},
+ {name:"たし", kata:"ク活用型",
+  conj:[["たから","たく"],["たかり","たく"],["たし"],["たかる","たき"],["たけれ"],["○"]],
+  meanings:[{n:"願望", acc:["願望","希望"]}]}
+]},
+{g:"き・けり", jd:"き・けり", units:[
+ {name:"き", kata:"特殊型", conj:[["せ"],["○"],["き"],["し"],["しか"],["○"]],
+  meanings:[{n:"過去", acc:["過去","体験過去"]}]},
+ {name:"けり", kata:"ラ変型", conj:[["けら"],["○"],["けり"],["ける"],["けれ"],["○"]],
+  pool:["地の文にある","和歌・会話文・手紙の中にある","下に体言を伴う","打消の語を伴う"],
+  meanings:[
+   {n:"過去", acc:["過去","伝聞過去"], k:"地の文にある"},
+   {n:"詠嘆", acc:["詠嘆","えいたん"], k:"和歌・会話文・手紙の中にある"}]}
+]},
+{g:"つ・ぬ", jd:"つ・ぬ", units:[
+ {name:"つ", kata:"下二段型", conj:[["て"],["て"],["つ"],["つる"],["つれ"],["てよ"]],
+  pool:["下に推量系の助動詞を伴う","それ以外の場合","下に体言を伴う","主語が偉い人である"],
+  meanings:[
+   {n:"強意", acc:["強意","確述"], k:"下に推量系の助動詞を伴う"},
+   {n:"完了", acc:["完了"], k:"それ以外の場合"}]},
+ {name:"ぬ", kata:"ナ変型", conj:[["な"],["に"],["ぬ"],["ぬる"],["ぬれ"],["ね"]],
+  pool:["下に推量系の助動詞を伴う","それ以外の場合","下に体言を伴う","主語が偉い人である"],
+  meanings:[
+   {n:"強意", acc:["強意","確述"], k:"下に推量系の助動詞を伴う"},
+   {n:"完了", acc:["完了"], k:"それ以外の場合"}]}
+]},
+{g:"たり（完了）", jd:"たり（完了）", units:[
+ {name:"たり", kata:"ラ変型", conj:[["たら"],["たり"],["たり"],["たる"],["たれ"],["たれ"]],
+  pool:["「〜ている・ていた」と訳せる（動作の継続）","存続で訳すと不自然になる（動作の終了）","下に体言を伴う","打消の語を伴う"],
+  meanings:[
+   {n:"存続", acc:["存続"], k:"「〜ている・ていた」と訳せる（動作の継続）"},
+   {n:"完了", acc:["完了"], k:"存続で訳すと不自然になる（動作の終了）"}]}
+]},
+{g:"り", jd:"り", units:[
+ {name:"り", kata:"ラ変型", conj:[["ら"],["り"],["り"],["る"],["れ"],["れ"]],
+  pool:["「〜ている・ていた」と訳せる（動作の継続）","存続で訳すと不自然になる（動作の終了）","下に体言を伴う","主語が偉い人である"],
+  meanings:[
+   {n:"存続", acc:["存続"], k:"「〜ている・ていた」と訳せる（動作の継続）"},
+   {n:"完了", acc:["完了"], k:"存続で訳すと不自然になる（動作の終了）"}]}
+]},
+{g:"けむ", jd:"けむ", units:[
+ {name:"けむ", kata:"四段型", conj:[["○"],["○"],["けむ"],["けむ"],["けめ"],["○"]],
+  pool:["下に体言を伴う","三人称主語の場合に多い","疑問語を伴う場合が多い","打消の語を伴う"],
+  meanings:[
+   {n:"過去伝聞・過去婉曲", acc:["過去伝聞・過去婉曲","過去伝聞","過去婉曲","伝聞・婉曲"], k:"下に体言を伴う"},
+   {n:"過去推量", acc:["過去推量"], k:"三人称主語の場合に多い"},
+   {n:"過去の原因推量", acc:["過去の原因推量","原因推量"], k:"疑問語を伴う場合が多い"}]}
+]},
+{g:"らむ・らし", jd:"らむ", units:[
+ {name:"らむ", kata:"四段型", conj:[["○"],["○"],["らむ"],["らむ"],["らめ"],["○"]],
+  pool:["上に音の存在を示す語がある","下に体言を伴う","三人称主語の場合に多い","疑問・反語の語を伴う"],
+  meanings:[
+   {n:"伝聞", acc:["伝聞"], k:"上に音の存在を示す語がある"},
+   {n:"婉曲", acc:["婉曲"], k:"下に体言を伴う"},
+   {n:"現在推量", acc:["現在推量"], k:"三人称主語の場合に多い"},
+   {n:"現在の原因推量", acc:["現在の原因推量","原因推量"], k:"疑問・反語の語を伴う"}]},
+ {name:"らし", kata:"特殊型", conj:[["○"],["○"],["らし"],["らし"],["らし"],["○"]],
+  meanings:[{n:"推定", acc:["推定"]}]}
+]},
+{g:"なり（伝聞推定）・めり", jd:"なり・めり", units:[
+ {name:"なり", kata:"ラ変型", conj:[["○"],["なり"],["なり"],["なる"],["なれ"],["○"]],
+  pool:["直前に音声を表す語を伴う","主に聴覚を根拠とする","主に視覚を根拠とする","下に体言を伴う"],
+  meanings:[
+   {n:"伝聞", acc:["伝聞"], k:"直前に音声を表す語を伴う"},
+   {n:"推定", acc:["推定"], k:"主に聴覚を根拠とする"}]},
+ {name:"めり", kata:"ラ変型", conj:[["○"],["めり"],["めり"],["める"],["めれ"],["○"]],
+  pool:["主に視覚を根拠とする","下に体言を伴う","主に聴覚を根拠とする","打消の語を伴う"],
+  meanings:[
+   {n:"推定", acc:["推定"], k:"主に視覚を根拠とする"},
+   {n:"婉曲", acc:["婉曲"], k:"下に体言を伴う"}]}
+]},
+{g:"べし・まじ", jd:"べし・まじ", units:[
+ {name:"べし", kata:"ク活用型",
+  conj:[["べから","べく"],["べかり","べく"],["べし"],["べかる","べき"],["べけれ"],["○"]],
+  pool:["まずこれで訳してみる","意味が強い場合（〜よう、〜たい）","意味が強い場合（〜なはずだ）","意味が強い場合（〜せよ）","意味が弱い場合（〜のがよい）","意味が弱い場合（〜だろう）"],
+  meanings:[
+   {n:"可能", acc:["可能"], k:"まずこれで訳してみる"},
+   {n:"意志", acc:["意志"], k:"意味が強い場合（〜よう、〜たい）"},
+   {n:"当然", acc:["当然"], k:"意味が強い場合（〜なはずだ）"},
+   {n:"命令", acc:["命令"], k:"意味が強い場合（〜せよ）"},
+   {n:"適当", acc:["適当"], k:"意味が弱い場合（〜のがよい）"},
+   {n:"推量", acc:["推量"], k:"意味が弱い場合（〜だろう）"}]},
+ {name:"まじ", kata:"シク活用型",
+  conj:[["まじから","まじく"],["まじかり","まじく"],["まじ"],["まじかる","まじき"],["まじけれ"],["○"]],
+  pool:["「べし」の可能に対応する","「べし」の意志に対応する","「べし」の当然に対応する","「べし」の命令に対応する","「べし」の適当に対応する","「べし」の推量に対応する"],
+  meanings:[
+   {n:"不可能", acc:["不可能"], k:"「べし」の可能に対応する"},
+   {n:"打消意志", acc:["打消意志","打ち消し意志"], k:"「べし」の意志に対応する"},
+   {n:"打消当然", acc:["打消当然","打ち消し当然"], k:"「べし」の当然に対応する"},
+   {n:"禁止", acc:["禁止"], k:"「べし」の命令に対応する"},
+   {n:"不適当", acc:["不適当"], k:"「べし」の適当に対応する"},
+   {n:"打消推量", acc:["打消推量","打ち消し推量"], k:"「べし」の推量に対応する"}]}
+]},
+{g:"なり（断定）・たり（断定）・ごとし", units:[
+ {name:"なり（断定）", kata:"ナリ活用型",
+  conj:[["なら"],["なり","に"],["なり"],["なる"],["なれ"],["なれ"]],
+  pool:["直前に場所・方角などを伴う","それ以外の場合","下に推量系の助動詞を伴う","主語が偉い人である"],
+  meanings:[
+   {n:"所在・存在", acc:["所在・存在","所在","存在"], k:"直前に場所・方角などを伴う"},
+   {n:"断定", acc:["断定"], k:"それ以外の場合"}]},
+ {name:"たり（断定）", kata:"タリ活用型",
+  conj:[["たら"],["たり","と"],["たり"],["たる"],["たれ"],["たれ"]],
+  meanings:[{n:"断定", acc:["断定"]}]},
+ {name:"ごとし", kata:"ク活用型",
+  conj:[["ごとく"],["ごとく"],["ごとし"],["ごとき"],["○"],["○"]],
+  pool:["同等関係が成り立つ","同等関係が成り立たない","下に体言を伴う","打消の語を伴う"],
+  meanings:[
+   {n:"例示", acc:["例示"], k:"同等関係が成り立つ"},
+   {n:"比況", acc:["比況"], k:"同等関係が成り立たない"}]}
+]},
+{g:"総合演習", jd:"総合（終止形・意味・活用形）", units:[]}
+];
+
+
 /* ==================== 用言 ==================== */
 /* 用言：現古館プリントより　no＝大問番号　【】＝傍線部　《》＝囲みの語　\n＝改行 */
 const YG = [
@@ -1578,13 +1770,13 @@ function renderWakaHome(){
 function renderJodoHome(){
   clearTimer(); state = null; area = "jodo"; crumb.textContent = "助動詞";
   const best = loadBest();
-  const cards = JDQ.map((g,i) => {
+  const cards = JDR.map((c,i) => {
     const b = best[`jodo-${i}`];
-    const pts = g.qs.reduce((n,q) => n + q.parts.length, 0);
+    const d = jodoPlan(c);
     return `<button class="setcard" data-jd="${i}">
-      <span class="no mincho">${esc(g.g)}</span>
-      <span class="range">全${g.qs.length}問</span>
-      <span class="best">${b === undefined ? "" : `最高 ${b} / ${pts}`}</span>
+      <span class="no mincho">${esc(c.g)}</span>
+      <span class="range">${esc(d.label)}</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${d.pts}`}</span>
     </button>`;
   }).join("");
   const eb = best["jodo-exam"];
@@ -1594,7 +1786,7 @@ function renderJodoHome(){
       <button class="examcard" id="exam">
         <span style="display:flex;flex-direction:column;gap:1px;">
           <span class="t mincho">通しテスト</span>
-          <span class="d">全${JD_ALL.length}問から20点分を無作為抽出　9割以上で合格</span>
+          <span class="d">入試問題 全${JD_ALL.length}問から20点分を無作為抽出　9割以上で合格</span>
         </span>
         <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb}点`}</span>
       </button>
@@ -1603,6 +1795,25 @@ function renderJodoHome(){
   stage.querySelectorAll("[data-jd]").forEach(b => b.addEventListener("click", () => startJdSec(Number(b.dataset.jd))));
   document.getElementById("exam").addEventListener("click", startJdExam);
   document.getElementById("tohome").addEventListener("click", renderHome);
+}
+/* 分野の中身：活用表・意味・識別基準・問題 */
+function jodoPlan(c){
+  const q = [];
+  c.units.forEach(u => {
+    q.push({t:"conj", u});
+    if (u.only !== "conj"){
+      q.push({t:"imi", u});
+      if (u.meanings.length > 1 && u.pool) q.push({t:"kijun", u});
+    }
+  });
+  const grp = c.jd ? JDQ.find(g => g.g === c.jd) : null;
+  const qs = grp ? grp.qs : [];
+  const pts = q.reduce((n,x) => n + (x.t === "conj" ? 6 : x.u.meanings.length), 0)
+            + qs.reduce((n,x) => n + x.parts.length, 0);
+  const bits = [];
+  if (c.units.length) bits.push(`活用表${c.units.length}`);
+  if (qs.length) bits.push(`問題${qs.length}`);
+  return {drills:q, qs, pts, label:bits.join("・") + `　${pts}点`};
 }
 
 /* ==================== 用言 一覧 ==================== */
@@ -1661,9 +1872,9 @@ function renderKeigoHome(){
 /* ==================== 出題キューの組み立て ==================== */
 function jq(gname, it){ return {t:"jd", d:it, sec:gname}; }
 function startJdSec(gi){
-  const g = JDQ[gi];
-  state = newState({area:"jodo", kind:"set", secId:gi, title:g.g, key:`jodo-${gi}`,
-                    queue: shuffle(g.qs).map(q => jq(g.g, q))});
+  const c = JDR[gi], plan = jodoPlan(c);
+  const queue = plan.drills.concat(shuffle(plan.qs).map(q => jq(c.jd || c.g, q)));
+  state = newState({area:"jodo", kind:"set", secId:gi, title:c.g, key:`jodo-${gi}`, queue});
   renderQuestion();
 }
 function startKisoSet(){
@@ -1806,7 +2017,8 @@ function renderQuestion(){
   clearTimer();
   state.answered = false; state.sel = {}; state.need = [];
   const q = state.queue[state.i];
-  ({vocab:rVocab, kugire:rKugire, kake:rKake, lead:rLead, jo:rJo, engo:rEngo, tech:rTech, jd:rJd})[q.t](q);
+  ({vocab:rVocab, kugire:rKugire, kake:rKake, lead:rLead, jo:rJo, engo:rEngo, tech:rTech, jd:rJd,
+    conj:rConj, imi:rImi, kijun:rKijun})[q.t](q);
   window.scrollTo(0, 0);
 }
 
@@ -2013,6 +2225,160 @@ function rJd(q){
   });
 }
 
+/* ==================== 助動詞の稽古（活用表・意味・識別基準） ==================== */
+const KEI6 = ["未然形","連用形","終止形","連体形","已然形","命令形"];
+const NONE = ["○","〇","◯","×","✕","なし","無し","ー","-","―","‐","–"];
+function normIn(s){
+  s = String(s == null ? "" : s).trim()
+      .replace(/[\s　・･、,．。]/g, "")
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+  return s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+}
+function matchCell(acc, val){
+  const v = normIn(val);
+  if (acc.length === 1 && acc[0] === "○") return NONE.includes(String(val).trim()) || v === "";
+  if (acc.some(a => normIn(a) === v)) return true;
+  if (acc.length === 2){
+    const [a, b] = acc.map(normIn);
+    return v === a + b || v === b + a;
+  }
+  return false;
+}
+function showAcc(acc){ return acc.join("・"); }
+
+/* --- ① 活用表 --- */
+function rConj(q){
+  const u = q.u;
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="src">${esc(u.name)}　${esc(u.kata)}</div>
+      <div class="label">活用表を埋める（その形が無いときは ○ ）</div>
+      <div class="conjtable">
+        ${KEI6.map((k,i) => `<label class="cell">
+           <span class="ck">${k}</span>
+           <input class="cin" id="c${i}" type="text" autocomplete="off" autocapitalize="off"
+                  autocorrect="off" spellcheck="false" aria-label="${k}">
+           <span class="fb" id="f${i}"></span>
+         </label>`).join("")}
+      </div>
+    </div>`);
+  const ins = [...stage.querySelectorAll(".cin")];
+  const sub = document.getElementById("submit");
+  const check = () => { sub.disabled = ins.some(x => x.value.trim() === ""); };
+  ins.forEach((x,i) => {
+    x.addEventListener("input", check);
+    x.addEventListener("keydown", e => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        if (i < ins.length - 1) ins[i+1].focus();
+        else if (!sub.disabled) sub.click();
+      }
+    });
+  });
+  ins[0].focus();
+  onSubmit(() => {
+    let got = 0;
+    ins.forEach((x,i) => {
+      const ok = matchCell(u.conj[i], x.value);
+      if (ok) got++;
+      x.disabled = true;
+      x.classList.add(ok ? "in-ok" : "in-ng");
+      document.getElementById("f"+i).innerHTML = ok
+        ? '<span class="mk ok">○</span>'
+        : `<span class="mk ng">×</span><span class="ans">${esc(showAcc(u.conj[i]))}</span>`;
+    });
+    finish(got === 6,
+      `<span class="gloss"><b>${esc(u.name)}</b>（${esc(u.kata)}）　${
+        KEI6.map((k,i) => k.replace("形","") + "：" + showAcc(u.conj[i])).join("　")}</span>`,
+      got, 6);
+  });
+}
+
+/* --- ② 意味 --- */
+function rImi(q){
+  const u = q.u, n = u.meanings.length;
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="src">${esc(u.name)}　${esc(u.kata)}</div>
+      <div class="label">この助動詞がもつ意味を書く（順序は問いません）</div>
+      <div class="imilist">
+        ${u.meanings.map((m,i) => `<label class="cell wide">
+           <span class="ck">${i+1}</span>
+           <input class="iin" id="i${i}" type="text" autocomplete="off" autocapitalize="off"
+                  autocorrect="off" spellcheck="false" aria-label="意味${i+1}">
+           <span class="fb" id="g${i}"></span>
+         </label>`).join("")}
+      </div>
+    </div>`);
+  const ins = [...stage.querySelectorAll(".iin")];
+  const sub = document.getElementById("submit");
+  const check = () => { sub.disabled = ins.some(x => x.value.trim() === ""); };
+  ins.forEach((x,i) => {
+    x.addEventListener("input", check);
+    x.addEventListener("keydown", e => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        if (i < ins.length - 1) ins[i+1].focus();
+        else if (!sub.disabled) sub.click();
+      }
+    });
+  });
+  ins[0].focus();
+  onSubmit(() => {
+    const left = u.meanings.slice();
+    let got = 0;
+    ins.forEach((x,i) => {
+      const v = normIn(x.value);
+      const hit = left.findIndex(m => m.acc.some(a => normIn(a) === v));
+      x.disabled = true;
+      if (hit >= 0){
+        got++; left.splice(hit,1);
+        x.classList.add("in-ok");
+        document.getElementById("g"+i).innerHTML = '<span class="mk ok">○</span>';
+      } else {
+        x.classList.add("in-ng");
+        document.getElementById("g"+i).innerHTML = '<span class="mk ng">×</span>';
+      }
+    });
+    finish(got === n,
+      `<span class="gloss"><b>${esc(u.name)}</b>の意味　${u.meanings.map(m => m.n).join("・")}</span>`,
+      got, n);
+  });
+}
+
+/* --- ③ 識別基準 --- */
+function rKijun(q){
+  const u = q.u;
+  const parts = u.meanings.map((m,k) => {
+    const others = shuffle(u.pool.filter(x => x !== m.k)).slice(0,3);
+    return {m, opts: shuffle([m.k, ...others])};
+  });
+  stage.innerHTML = frame(`
+    <div class="prompt">
+      <div class="src">${esc(u.name)}　${esc(u.kata)}</div>
+      <div class="label">それぞれの意味を見分ける基準は</div>
+      <p class="body">${u.meanings.map(m => esc(m.n)).join("　／　")}</p>
+    </div>
+    ${parts.map((p,k) => `
+      <div class="part">
+        <div class="parthead"><span class="pno">${esc(p.m.n)}</span>と判断する基準は</div>
+        ${group("p"+k, p.opts.map((o,i) => ({v:o, h:esc(o)})), "sent")}
+      </div>`).join("")}`);
+  bindGroups(parts.map((_,k) => "p"+k));
+  onSubmit(sel => {
+    let got = 0, fb = "";
+    parts.forEach((p,k) => {
+      const ok = sel["p"+k] === p.m.k;
+      if (ok) got++;
+      paintGroup("p"+k, p.m.k, sel["p"+k]);
+      fb += `<div class="partfb ${ok ? "ok" : "ng"}">
+        <span class="gloss"><span class="pno">${esc(p.m.n)}　${ok ? "○" : "×"}</span>${esc(p.m.k)}</span></div>`;
+    });
+    finish(got === parts.length, fb, got, parts.length);
+  });
+}
+
+
 /* ==================== 採点と送り ==================== */
 /* 正解：1秒で自動送り（タップで即送り）　誤答：「次の問題へ」を押すまで止める */
 function finish(ok, html, got, pts){
@@ -2057,6 +2423,9 @@ document.addEventListener("click", () => {
 /* ==================== 結果 ==================== */
 function missLabel(q){
   if (q.t === "vocab") return {w:q.w.w, m:q.w.m};
+  if (q.t === "conj")  return {w:`${q.u.name}　活用表`, m:KEI6.map((k,i) => k.replace("形","") + "：" + showAcc(q.u.conj[i])).join("　")};
+  if (q.t === "imi")   return {w:`${q.u.name}　意味`, m:q.u.meanings.map(m => m.n).join("・")};
+  if (q.t === "kijun") return {w:`${q.u.name}　識別基準`, m:q.u.meanings.map(m => m.n + "＝" + m.k).join("／")};
   const d = q.d;
   if (q.t === "kugire") return {w:KUGIRE_NAME[d.at] + "　" + d.m, m:d.k.join("　")};
   if (q.t === "kake")   return {w:d.k + "　……　" + d.a + " と " + d.b, m:stripMark(d.p)};
