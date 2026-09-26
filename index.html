@@ -156,8 +156,7 @@
     color:var(--ink-soft); margin-left:10px; font-variant-numeric:tabular-nums;}
   .box{display:inline-block; border:1.5px solid var(--shu); border-radius:2px; padding:0 5px; margin:0 2px;
     font-weight:700; color:var(--shu);}
-  .conjtable{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
-  @media (max-width:430px){.conjtable{grid-template-columns:1fr;}}
+  .conjtable{display:flex; flex-direction:column; gap:8px; max-width:420px;}
   .imilist{display:flex; flex-direction:column; gap:10px;}
   .cell{display:flex; align-items:center; gap:8px; background:var(--paper);
     border:1px solid var(--rule); border-radius:2px; padding:8px 10px;}
@@ -1546,10 +1545,10 @@ const KISO = [
 
 const KG = [
 {g:"敬語の基礎", items:[
- {no:"69", src:"基礎", conv:true, c:"△", body:"敬語には、丁寧語、尊敬語、謙譲語の三種類があるが、その並び順は（　　　）（　　　）（　　　）の順である。",
+ {no:"69", src:"基礎", conv:true, c:"◎", body:"敬語には、丁寧語、尊敬語、謙譲語の三種類があるが、その並び順は（　　　）（　　　）（　　　）の順である。",
   q:"並び順として正しいものを選べ。",
-  opts:["丁寧語　→　謙譲語　→　尊敬語","尊敬語　→　謙譲語　→　丁寧語","謙譲語　→　尊敬語　→　丁寧語","丁寧語　→　尊敬語　→　謙譲語"], a:1,
-  why:"敬意の度合いの低い順に丁寧語・謙譲語・尊敬語と並べる整理による。並べ方は教える側の流儀にもよるため、要確認。"},
+  opts:["丁寧語　→　謙譲語　→　尊敬語","尊敬語　→　謙譲語　→　丁寧語","謙譲語　→　尊敬語　→　丁寧語","丁寧語　→　尊敬語　→　謙譲語"], a:3,
+  why:"一語に重なるときの並び順。「奏し給ひ侍り」のように謙譲語→尊敬語→丁寧語の順にしか現れず、尊敬語→謙譲語という並びはありえない。三種がつねに揃うわけではないが、出てくる順序は変わらない。"},
  {no:"70-1", src:"基礎", conv:true, c:"◎", body:"誰からの敬意かの判断基準は、地の文か（　　　）かであり、前者なら筆者からの、後者なら（　　　）からの敬意である。",
   q:"一つめの空所に入る語を選べ。", opts:["会話文","和歌","漢文","詞書"], a:1,
   why:"地の文か会話文かで、誰からの敬意かが決まる。"},
