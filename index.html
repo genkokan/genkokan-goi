@@ -469,7 +469,7 @@ const JO = [
  {p:"【難波潟みじかき蘆の】ふしの間も逢はでこの世を過ぐしてよとや",ans:"ふし",d:["蘆","世","逢はで"],
   m:"イ",w:"蘆の「節」と「臥し」の掛詞。",note:"節と節との間の短さで逢瀬の短さを表す比喩と見て「ウ」とする説もある。"},
  {p:"【みかの原わきて流るるいづみ川】いつ見きとてか恋しかるらむ",ans:"いつ見",d:["わきて","流るる","恋しかる"],
-  m:"イ",w:"「いづみ」と「いつ見」の掛詞。"},
+  m:"ア",w:"川の名「いづみ」の音を、下句の「いつ見」に重ねて導く。「いつ見」は一語で二つの意味を担う掛詞ではなく、同じ音を繰り返したもの。"},
  {p:"【浅茅生の小野の篠原】しのぶれどあまりてなどか人の恋しき",ans:"しのぶ",d:["小野","篠原","恋しき"],
   m:"ア",w:"「しの（篠）」と「しのぶ」の同じ音を重ねる。"}
 ];
@@ -2071,11 +2071,23 @@ function bindGroups(need, multi){
     }));
   });
 }
-function onSubmit(fn){
-  document.getElementById("submit").addEventListener("click", ev => {
+function tapBind(el, fn){
+  if (!el) return;
+  const go = ev => {
+    if (ev.cancelable) ev.preventDefault();
     ev.stopPropagation();
-    if (state.answered || document.getElementById("submit").disabled) return;
-    document.getElementById("submitbar").remove();
+    fn(ev);
+  };
+  el.addEventListener("pointerdown", go);
+  el.addEventListener("click", go);
+}
+function onSubmit(fn){
+  const btn = document.getElementById("submit");
+  tapBind(btn, () => {
+    if (state.answered || btn.disabled) return;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const bar = document.getElementById("submitbar");
+    if (bar) bar.remove();
     fn(state.sel);
   });
 }
@@ -2307,7 +2319,7 @@ const KEI6 = ["未然形","連用形","終止形","連体形","已然形","命�
 const NONE = ["○","〇","◯","×","✕","なし","無し","ー","-","―","‐","–"];
 function normIn(s){
   s = String(s == null ? "" : s).trim()
-      .replace(/[\s　・･、,．。]/g, "")
+      .replace(/[\s　・･、，,．。\/／|｜･･]/g, "")
       .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
   return s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
 }
@@ -2344,7 +2356,7 @@ function rConj(q){
   stage.innerHTML = frame(`
     <div class="prompt">
       <div class="src">${esc(u.name)}　${esc(u.kata)}</div>
-      <div class="label">活用表を埋める（その形が無いときは ○ ）</div>
+      <div class="label">活用表を埋める（その形が無いときは ○ ／ 二形あるときは「こ・こよ」でも「こ こよ」でも可）</div>
       ${u.hint ? `<div class="hint">${esc(u.hint)}</div>` : ""}
       <div class="conjtable${two ? " two" : ""}">
         ${two ? '<div class="hd"></div><div class="hd">補助活用</div><div class="hd">本活用</div>' : ""}
@@ -2353,14 +2365,19 @@ function rConj(q){
     </div>`);
   const ins = cells.map(c => document.getElementById(c.id));
   const sub = document.getElementById("submit");
-  const check = () => { sub.disabled = ins.some(x => x.value.trim() === ""); };
+  sub.disabled = false;
+  const tally = () => {
+    const n = ins.filter(x => x.value.trim() === "").length;
+    sub.textContent = n ? `解答する（未記入 ${n}）` : "解答する";
+  };
+  tally();
   ins.forEach((x,i) => {
-    x.addEventListener("input", check);
+    x.addEventListener("input", tally);
     x.addEventListener("keydown", e => {
       if (e.key === "Enter"){
         e.preventDefault();
         if (i < ins.length - 1) ins[i+1].focus();
-        else if (!sub.disabled) sub.click();
+        else { x.blur(); sub.click(); }
       }
     });
   });
@@ -2368,10 +2385,12 @@ function rConj(q){
   onSubmit(() => {
     let got = 0;
     cells.forEach((c,i) => {
+      const blank = ins[i].value.trim() === "";
       const ok = matchCell(c.acc, ins[i].value);
       if (ok) got++;
       ins[i].disabled = true;
       ins[i].classList.add(ok ? "in-ok" : "in-ng");
+      if (blank) ins[i].value = ok ? "○" : "未記入";
       document.getElementById("f" + c.id).innerHTML = ok
         ? '<span class="mk ok">○</span>' : '<span class="mk ng">×</span>';
     });
@@ -2403,14 +2422,19 @@ function rImi(q){
     </div>`);
   const ins = [...stage.querySelectorAll(".iin")];
   const sub = document.getElementById("submit");
-  const check = () => { sub.disabled = ins.some(x => x.value.trim() === ""); };
+  sub.disabled = false;
+  const tally = () => {
+    const n = ins.filter(x => x.value.trim() === "").length;
+    sub.textContent = n ? `解答する（未記入 ${n}）` : "解答する";
+  };
+  tally();
   ins.forEach((x,i) => {
-    x.addEventListener("input", check);
+    x.addEventListener("input", tally);
     x.addEventListener("keydown", e => {
       if (e.key === "Enter"){
         e.preventDefault();
         if (i < ins.length - 1) ins[i+1].focus();
-        else if (!sub.disabled) sub.click();
+        else { x.blur(); sub.click(); }
       }
     });
   });
@@ -2420,8 +2444,9 @@ function rImi(q){
     let got = 0;
     ins.forEach((x,i) => {
       const v = normIn(x.value);
-      const hit = left.findIndex(m => m.acc.some(a => normIn(a) === v));
+      const hit = v === "" ? -1 : left.findIndex(m => m.acc.some(a => normIn(a) === v));
       x.disabled = true;
+      if (hit < 0 && x.value.trim() === "") x.value = "未記入";
       if (hit >= 0){
         got++; left.splice(hit,1);
         x.classList.add("in-ok");
@@ -2496,7 +2521,7 @@ function finish(ok, html, got, pts){
     state.canSkipAt = Date.now() + 350;
     state.timer = setTimeout(advance, 1000);
   } else {
-    document.getElementById("next").addEventListener("click", ev => { ev.stopPropagation(); advance(); });
+    tapBind(document.getElementById("next"), () => advance());
   }
 }
 function clearTimer(){ if (state && state.timer){ clearTimeout(state.timer); state.timer = null; } }
