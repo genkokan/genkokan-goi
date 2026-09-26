@@ -52,7 +52,9 @@
   .masthead{border-bottom:1px solid var(--rule); padding-bottom:12px;
     display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
   .masthead h1{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
-    font-weight:700; font-size:25px; margin:0; letter-spacing:.06em;}
+    font-weight:700; font-size:25px; margin:0; letter-spacing:.06em;
+    cursor:pointer; transition:color .12s ease;}
+  .masthead h1:hover{color:var(--shu);}
   .masthead .crumb{font-size:12px; color:var(--ink-faint); letter-spacing:.1em; white-space:nowrap;}
 
   /* ---- 大扉 ---- */
@@ -156,7 +158,29 @@
     color:var(--ink-soft); margin-left:10px; font-variant-numeric:tabular-nums;}
   .box{display:inline-block; border:1.5px solid var(--shu); border-radius:2px; padding:0 5px; margin:0 2px;
     font-weight:700; color:var(--shu);}
-  .conjtable{display:flex; flex-direction:column; gap:8px; max-width:420px;}
+  .conjtable.two{grid-template-columns:max-content minmax(5.4em,9em) minmax(5.4em,9em);}
+  @media (max-width:370px){
+    .conjtable.two{grid-template-columns:max-content minmax(0,1fr) minmax(0,1fr); width:100%;}
+    .conjtable.two .cv{padding:3px 4px; gap:3px;}
+    .conjtable.two .ck{padding:9px 7px;}
+  }
+  .conjtable .hd{padding:6px 8px; font-size:11.5px; color:var(--ink-faint); text-align:center;
+    border-bottom:1px solid var(--rule); background:var(--shu-soft);}
+  .conjtable .hd:first-child{background:transparent; border-right:1px solid var(--rule);}
+  .conjtable.two .cv + .cv{border-left:1px solid var(--rule);}
+  .conjtable{display:grid; grid-template-columns:max-content minmax(6.5em,10em);
+    border:1px solid var(--rule); border-radius:2px; overflow:hidden;
+    width:max-content; max-width:100%; background:var(--paper);}
+  .conjtable .ck{display:flex; align-items:center; white-space:nowrap;
+    padding:9px 12px; font-size:12.5px; color:var(--ink-soft);
+    border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); min-width:0;}
+  .conjtable .cv{display:flex; align-items:center; gap:6px; padding:3px 8px; min-width:0;
+    border-bottom:1px solid var(--rule);}
+  .conjtable .ck.last, .conjtable .cv.last{border-bottom:0;}
+  .conjtable .cin{width:100%; min-width:0; text-align:center; padding:6px 2px;
+    border:0; border-bottom:1.5px solid transparent; background:transparent;}
+  .conjtable .cin:focus{border-bottom-color:var(--ai);}
+  .prompt .hint{font-size:12px; color:var(--ink-faint); margin:-4px 0 10px; line-height:1.6;}
   .imilist{display:flex; flex-direction:column; gap:10px;}
   .cell{display:flex; align-items:center; gap:8px; background:var(--paper);
     border:1px solid var(--rule); border-radius:2px; padding:8px 10px;}
@@ -280,7 +304,7 @@
 
 <div class="wrap">
   <header class="masthead">
-    <h1 class="mincho">アプリde現古館</h1>
+    <h1 class="mincho" id="brand" role="button" tabindex="0" title="トップページへ戻る">アプリde現古館</h1>
     <span class="crumb" id="crumb"></span>
   </header>
   <main id="stage"></main>
@@ -1022,7 +1046,7 @@ const JDR = [
 ]},
 {g:"ず", jd:"ず", units:[
  {name:"ず", kata:"特殊型",
-  conj:[["ず","ざら"],["ず","ざり"],["ず"],["ぬ","ざる"],["ね","ざれ"],["ざれ"]],
+  conj2:[[["ざら"],["な","○"]],[["ざり"],["ず"]],[["○"],["ず"]],[["ざる"],["ぬ"]],[["ざれ"],["ね"]],[["ざれ"],["○"]]],
   meanings:[{n:"打消", acc:["打消","打ち消し","うちけし"]}]}
 ]},
 {g:"む・むず", jd:"む・むず", units:[
@@ -1054,10 +1078,10 @@ const JDR = [
 ]},
 {g:"まほし・たし", jd:"まほし", units:[
  {name:"まほし", kata:"シク活用型",
-  conj:[["まほしから","まほしく"],["まほしかり","まほしく"],["まほし"],["まほしかる","まほしき"],["まほしけれ"],["○"]],
+  conj2:[[["まほしから","から"],["まほしく","く"]],[["まほしかり","かり"],["まほしく","く"]],[["○"],["まほし"]],[["まほしかる","かる"],["まほしき","き"]],[["○"],["まほしけれ","けれ"]],[["○"],["○"]]],
   meanings:[{n:"願望", acc:["願望","希望"]}]},
  {name:"たし", kata:"ク活用型",
-  conj:[["たから","たく"],["たかり","たく"],["たし"],["たかる","たき"],["たけれ"],["○"]],
+  conj2:[[["たから","から"],["たく","く"]],[["たかり","かり"],["たく","く"]],[["○"],["たし"]],[["たかる","かる"],["たき","き"]],[["○"],["たけれ","けれ"]],[["○"],["○"]]],
   meanings:[{n:"願望", acc:["願望","希望"]}]}
 ]},
 {g:"き・けり", jd:"き・けり", units:[
@@ -1128,7 +1152,7 @@ const JDR = [
 ]},
 {g:"べし・まじ", jd:"べし・まじ", units:[
  {name:"べし", kata:"ク活用型",
-  conj:[["べから","べく"],["べかり","べく"],["べし"],["べかる","べき"],["べけれ"],["○"]],
+  conj2:[[["べから","から"],["べく","く"]],[["べかり","かり"],["べく","く"]],[["○"],["べし"]],[["べかる","かる"],["べき","き"]],[["○"],["べけれ","けれ"]],[["○"],["○"]]],
   pool:["まずこれで訳してみる","意味が強い場合（〜よう、〜たい）","意味が強い場合（〜なはずだ）","意味が強い場合（〜せよ）","意味が弱い場合（〜のがよい）","意味が弱い場合（〜だろう）"],
   meanings:[
    {n:"可能", acc:["可能"], k:"まずこれで訳してみる"},
@@ -1138,7 +1162,7 @@ const JDR = [
    {n:"適当", acc:["適当"], k:"意味が弱い場合（〜のがよい）"},
    {n:"推量", acc:["推量"], k:"意味が弱い場合（〜だろう）"}]},
  {name:"まじ", kata:"シク活用型",
-  conj:[["まじから","まじく"],["まじかり","まじく"],["まじ"],["まじかる","まじき"],["まじけれ"],["○"]],
+  conj2:[[["まじから","から"],["まじく","く"]],[["まじかり","かり"],["まじく","く"]],[["○"],["まじ"]],[["まじかる","かる"],["まじき","き"]],[["○"],["まじけれ","けれ"]],[["○"],["○"]]],
   pool:["「べし」の可能に対応する","「べし」の意志に対応する","「べし」の当然に対応する","「べし」の命令に対応する","「べし」の適当に対応する","「べし」の推量に対応する"],
   meanings:[
    {n:"不可能", acc:["不可能"], k:"「べし」の可能に対応する"},
@@ -1516,6 +1540,42 @@ const YG = [
 ]}
 ];
 
+/* 用言の活用表：例語は仮名で示し、語幹を含めた形でも活用語尾だけでも正解とする */
+const YGT = [
+{g:"動詞の活用表", units:[
+ {name:"四段活用", kata:"例　書く（かく）",
+  conj:[["かか","か"],["かき","き"],["かく","く"],["かく","く"],["かけ","け"],["かけ","け"]]},
+ {name:"上一段活用", kata:"例　見る（みる）",
+  conj:[["み"],["み"],["みる"],["みる"],["みれ"],["みよ"]]},
+ {name:"上二段活用", kata:"例　起く（おく）",
+  conj:[["おき","き"],["おき","き"],["おく","く"],["おくる","くる"],["おくれ","くれ"],["おきよ","きよ"]]},
+ {name:"下一段活用", kata:"例　蹴る（ける）",
+  conj:[["け"],["け"],["ける"],["ける"],["けれ"],["けよ"]]},
+ {name:"下二段活用", kata:"例　受く（うく）",
+  conj:[["うけ","け"],["うけ","け"],["うく","く"],["うくる","くる"],["うくれ","くれ"],["うけよ","けよ"]]},
+ {name:"カ行変格活用", kata:"例　来（く）",
+  conj:[["こ"],["き"],["く"],["くる"],["くれ"],["こ","こよ"]]},
+ {name:"サ行変格活用", kata:"例　す",
+  conj:[["せ"],["し"],["す"],["する"],["すれ"],["せよ"]]},
+ {name:"ナ行変格活用", kata:"例　死ぬ（しぬ）",
+  conj:[["しな","な"],["しに","に"],["しぬ","ぬ"],["しぬる","ぬる"],["しぬれ","ぬれ"],["しね","ね"]]},
+ {name:"ラ行変格活用", kata:"例　あり",
+  conj:[["あら","ら"],["あり","り"],["あり","り"],["ある","る"],["あれ","れ"],["あれ","れ"]]}
+]},
+{g:"形容詞・形容動詞の活用表", units:[
+  {name:"形容詞ク活用", kata:"例　なし",
+  conj2:[[["なから","から"],["なく","く"]],[["なかり","かり"],["なく","く"]],[["○"],["なし","し"]],[["なかる","かる"],["なき","き"]],[["○"],["なけれ","けれ"]],[["なかれ","かれ"],["○"]]]},
+ {name:"形容詞シク活用", kata:"例　うつくし",
+  conj2:[[["うつくしから","しから"],["うつくしく","しく"]],[["うつくしかり","しかり"],["うつくしく","しく"]],[["○"],["うつくし","し"]],[["うつくしかる","しかる"],["うつくしき","しき"]],[["○"],["うつくしけれ","しけれ"]],[["うつくしかれ","しかれ"],["○"]]]},
+{name:"形容動詞ナリ活用", kata:"例　静かなり（しづかなり）",
+  conj:[["しづかなら","なら"],["しづかなり","しづかに","なり","に"],["しづかなり","なり"],
+        ["しづかなる","なる"],["しづかなれ","なれ"],["しづかなれ","なれ"]]},
+ {name:"形容動詞タリ活用", kata:"例　堂々たり（だうだうたり）",
+  conj:[["だうだうたら","たら"],["だうだうたり","だうだうと","たり","と"],["だうだうたり","たり"],
+        ["だうだうたる","たる"],["だうだうたれ","たれ"],["だうだうたれ","たれ"]]}
+]}
+];
+
 const YGQ = YG.map(g => ({g:g.g, qs:mergeParts(g.items)}));
 const YG_ALL = [];
 YGQ.forEach(g => g.qs.forEach(q => YG_ALL.push({g:g.g, d:q})));
@@ -1807,7 +1867,7 @@ function jodoPlan(c){
   });
   const grp = c.jd ? JDQ.find(g => g.g === c.jd) : null;
   const qs = grp ? grp.qs : [];
-  const pts = q.reduce((n,x) => n + (x.t === "conj" ? 6 : x.u.meanings.length), 0)
+  const pts = q.reduce((n,x) => n + (x.t === "conj" ? (x.u.conj2 ? 12 : 6) : x.u.meanings.length), 0)
             + qs.reduce((n,x) => n + x.parts.length, 0);
   const bits = [];
   if (c.units.length) bits.push(`活用表${c.units.length}`);
@@ -1828,9 +1888,20 @@ function renderYogenHome(){
       <span class="best">${b === undefined ? "" : `最高 ${b} / ${pts}`}</span>
     </button>`;
   }).join("");
+  const tcards = YGT.map((t,i) => {
+    const b = best[`yogen-t${i}`];
+    return `<button class="setcard" data-ygt="${i}">
+      <span class="no mincho">${esc(t.g)}</span>
+      <span class="range">活用表${t.units.length}　${t.units.reduce((n,u)=>n+(u.conj2?12:6),0)}点</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${t.units.reduce((n,u)=>n+(u.conj2?12:6),0)}`}</span>
+    </button>`;
+  }).join("");
   const eb = best["yogen-exam"];
   stage.innerHTML = `
     <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="sectitle">活用表を書く</div>
+      <div class="setgrid">${tcards}</div>
+      <div class="sectitle">入試問題</div>
       <div class="setgrid tight">${cards}</div>
       <button class="examcard" id="exam">
         <span style="display:flex;flex-direction:column;gap:1px;">
@@ -1841,6 +1912,7 @@ function renderYogenHome(){
       </button>
       <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
     </div>`;
+  stage.querySelectorAll("[data-ygt]").forEach(b => b.addEventListener("click", () => startYgtSec(Number(b.dataset.ygt))));
   stage.querySelectorAll("[data-yg]").forEach(b => b.addEventListener("click", () => startYgSec(Number(b.dataset.yg))));
   document.getElementById("exam").addEventListener("click", startYgExam);
   document.getElementById("tohome").addEventListener("click", renderHome);
@@ -1886,6 +1958,12 @@ function startKgSec(gi){
   const g = KGQ[gi];
   state = newState({area:"keigo", kind:"set", secId:gi, title:g.g, key:`keigo-${gi}`,
                     queue: shuffle(g.qs).map(q => jq(g.g, q))});
+  renderQuestion();
+}
+function startYgtSec(i){
+  const t = YGT[i];
+  state = newState({area:"yogen", kind:"set", ygt:i, title:t.g, key:`yogen-t${i}`,
+                    queue: shuffle(t.units).map(u => ({t:"conj", u}))});
   renderQuestion();
 }
 function startYgSec(gi){
@@ -2236,32 +2314,44 @@ function normIn(s){
 function matchCell(acc, val){
   const v = normIn(val);
   if (acc.length === 1 && acc[0] === "○") return NONE.includes(String(val).trim()) || v === "";
-  if (acc.some(a => normIn(a) === v)) return true;
-  if (acc.length === 2){
-    const [a, b] = acc.map(normIn);
-    return v === a + b || v === b + a;
-  }
+  const S = acc.map(normIn);
+  if (S.includes(v)) return true;
+  for (const a of S) for (const b of S) if (a !== b && v === a + b) return true;
   return false;
 }
 function showAcc(acc){ return acc.join("・"); }
 
-/* --- ① 活用表 --- */
+/* --- ① 活用表（二形あるものは 左＝補助活用／右＝本活用 の二列） --- */
 function rConj(q){
-  const u = q.u;
+  const u = q.u, two = !!u.conj2;
+  const cells = [];   // {id, acc}
+  const rows = KEI6.map((k,i) => {
+    const last = i === 5 ? " last" : "";
+    if (two){
+      const [ho, hon] = u.conj2[i];
+      cells.push({id:"a"+i, acc:ho}, {id:"b"+i, acc:hon});
+      return `<div class="ck${last}">${k}</div>
+        <div class="cv${last}"><input class="cin" id="a${i}" type="text" aria-label="${k} 補助活用"
+          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><span class="fb" id="fa${i}"></span></div>
+        <div class="cv${last}"><input class="cin" id="b${i}" type="text" aria-label="${k} 本活用"
+          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><span class="fb" id="fb${i}"></span></div>`;
+    }
+    cells.push({id:"c"+i, acc:u.conj[i]});
+    return `<div class="ck${last}">${k}</div>
+      <div class="cv${last}"><input class="cin" id="c${i}" type="text" aria-label="${k}"
+        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><span class="fb" id="fc${i}"></span></div>`;
+  }).join("");
   stage.innerHTML = frame(`
     <div class="prompt">
       <div class="src">${esc(u.name)}　${esc(u.kata)}</div>
       <div class="label">活用表を埋める（その形が無いときは ○ ）</div>
-      <div class="conjtable">
-        ${KEI6.map((k,i) => `<label class="cell">
-           <span class="ck">${k}</span>
-           <input class="cin" id="c${i}" type="text" autocomplete="off" autocapitalize="off"
-                  autocorrect="off" spellcheck="false" aria-label="${k}">
-           <span class="fb" id="f${i}"></span>
-         </label>`).join("")}
+      ${u.hint ? `<div class="hint">${esc(u.hint)}</div>` : ""}
+      <div class="conjtable${two ? " two" : ""}">
+        ${two ? '<div class="hd"></div><div class="hd">補助活用</div><div class="hd">本活用</div>' : ""}
+        ${rows}
       </div>
     </div>`);
-  const ins = [...stage.querySelectorAll(".cin")];
+  const ins = cells.map(c => document.getElementById(c.id));
   const sub = document.getElementById("submit");
   const check = () => { sub.disabled = ins.some(x => x.value.trim() === ""); };
   ins.forEach((x,i) => {
@@ -2277,19 +2367,21 @@ function rConj(q){
   ins[0].focus();
   onSubmit(() => {
     let got = 0;
-    ins.forEach((x,i) => {
-      const ok = matchCell(u.conj[i], x.value);
+    cells.forEach((c,i) => {
+      const ok = matchCell(c.acc, ins[i].value);
       if (ok) got++;
-      x.disabled = true;
-      x.classList.add(ok ? "in-ok" : "in-ng");
-      document.getElementById("f"+i).innerHTML = ok
-        ? '<span class="mk ok">○</span>'
-        : `<span class="mk ng">×</span><span class="ans">${esc(showAcc(u.conj[i]))}</span>`;
+      ins[i].disabled = true;
+      ins[i].classList.add(ok ? "in-ok" : "in-ng");
+      document.getElementById("f" + c.id).innerHTML = ok
+        ? '<span class="mk ok">○</span>' : '<span class="mk ng">×</span>';
     });
-    finish(got === 6,
-      `<span class="gloss"><b>${esc(u.name)}</b>（${esc(u.kata)}）　${
-        KEI6.map((k,i) => k.replace("形","") + "：" + showAcc(u.conj[i])).join("　")}</span>`,
-      got, 6);
+    const line = two
+      ? KEI6.map((k,i) => `${k.replace("形","")}：${showAcc(u.conj2[i][1])}（補助 ${showAcc(u.conj2[i][0])}）`).join("　／　")
+      : KEI6.map((k,i) => `${k.replace("形","")}：${showAcc(u.conj[i])}`).join("　／　");
+    finish(got === cells.length,
+      `<span class="gloss"><b>${esc(u.name)}</b>　${esc(u.kata)}</span>
+       <span class="why">${esc(line)}</span>`,
+      got, cells.length);
   });
 }
 
@@ -2422,7 +2514,8 @@ document.addEventListener("click", () => {
 /* ==================== 結果 ==================== */
 function missLabel(q){
   if (q.t === "vocab") return {w:q.w.w, m:q.w.m};
-  if (q.t === "conj")  return {w:`${q.u.name}　活用表`, m:KEI6.map((k,i) => k.replace("形","") + "：" + showAcc(q.u.conj[i])).join("　")};
+  if (q.t === "conj")  return {w:`${q.u.name}　活用表`, m:KEI6.map((k,i) => k.replace("形","") + "：" +
+      (q.u.conj2 ? showAcc(q.u.conj2[i][1]) + "／" + showAcc(q.u.conj2[i][0]) : showAcc(q.u.conj[i]))).join("　")};
   if (q.t === "imi")   return {w:`${q.u.name}　意味`, m:q.u.meanings.map(m => m.n).join("・")};
   if (q.t === "kijun") return {w:`${q.u.name}　識別基準`, m:q.u.meanings.map(m => m.n + "＝" + m.k).join("／")};
   const d = q.d;
@@ -2474,7 +2567,8 @@ function renderResult(){
     const wasExam = isExam || state.from === "exam";
     if (state.area === "goi") wasExam ? startGoiExam() : startGoiSet(state.setIndex);
     else if (state.area === "waka") wasExam ? startWakaExam() : startWakaSec(state.secId);
-    else if (state.area === "yogen") wasExam ? startYgExam() : startYgSec(state.secId);
+    else if (state.area === "yogen") wasExam ? startYgExam()
+         : (state.ygt != null ? startYgtSec(state.ygt) : startYgSec(state.secId));
     else if (state.area === "kiso") startKisoSet();
     else if (state.area === "keigo") startKgSec(state.secId);
     else wasExam ? startJdExam() : startJdSec(state.secId);
@@ -2498,6 +2592,14 @@ document.addEventListener("keydown", e => {
     else if (state.answered && state.timer){ e.preventDefault(); advance(); }
   }
 });
+
+/* 見出しを押すとトップページへ戻る */
+(function(){
+  const brand = document.getElementById("brand");
+  const go = e => { e.stopPropagation(); clearTimer(); renderHome(); };
+  brand.addEventListener("click", go);
+  brand.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") go(e); });
+})();
 
 renderHome();
 </script>
