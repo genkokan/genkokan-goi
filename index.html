@@ -191,6 +191,11 @@
   .cin:focus,.iin:focus{outline:none; border-bottom-color:var(--ai);}
   .cin.in-ok,.iin.in-ok{border-bottom-color:var(--shu); color:var(--shu);}
   .cin.in-ng,.iin.in-ng{border-bottom-color:var(--ai); color:var(--ai);}
+  .kakelist{display:flex; flex-direction:column; gap:10px;}
+  .kakerow{display:flex; align-items:center; gap:8px; padding:8px 10px; min-width:0;
+    background:var(--raised); border:1px solid var(--rule); border-radius:2px;}
+  .kakerow .to{flex:0 0 auto; font-size:14px; color:var(--ink-soft);}
+  .kakerow .iin{text-align:center;}
   .fb{flex:0 0 auto; display:flex; align-items:center; gap:6px;}
   .fb .mk{font-family:"Shippori Mincho",serif; font-size:16px; font-weight:700;}
   .fb .mk.ok{color:var(--shu);} .fb .mk.ng{color:var(--ai);}
@@ -424,30 +429,47 @@ const KUGIRE_WHY = [
  {m:"ウ", t:"終助詞"}
 ];
 
-/* 掛詞：p=和歌（【】が掛詞）、a/b=掛けられた二つの意味 */
+/* 掛詞：p=和歌（傍線なし）、pairs=その歌に用いられた掛詞
+   k=掛詞の語、x/y=掛けられた二つの意味（先頭が代表表記、以下は許容表記） */
 const KAKE = [
- {p:"わが庵は都のたつみしかぞ住む世を【うぢ】山と人はいふなり",k:"うぢ",a:"宇治",b:"憂し"},
- {p:"花の色はうつりにけりないたづらにわが身世に【ふる】ながめせしまに",k:"ふる",a:"降る",b:"経る"},
- {p:"花の色はうつりにけりないたづらにわが身世にふる【ながめ】せしまに",k:"ながめ",a:"長雨",b:"眺め"},
- {p:"これやこの行くも帰るも別れては知るも知らぬも【あふ坂】の関",k:"あふ坂",a:"逢坂",b:"逢ふ"},
- {p:"みちのくのしのぶもぢずり誰ゆゑに乱れ【そめ】にしわれならなくに",k:"そめ",a:"初め",b:"染め"},
- {p:"立ち別れ【いなば】の山の峰に生ふるまつとし聞かば今帰り来む",k:"いなば",a:"因幡",b:"往なば"},
- {p:"立ち別れいなばの山の峰に生ふる【まつ】とし聞かば今帰り来む",k:"まつ",a:"松",b:"待つ"},
- {p:"わびぬれば今はた同じ難波なる【みをつくし】ても逢はむとぞ思ふ",k:"みをつくし",a:"澪標",b:"身を尽くし"},
- {p:"吹くからに秋の草木のしをるればむべ山風を【あらし】といふらむ",k:"あらし",a:"嵐",b:"荒らし"},
- {p:"この【たび】は幣も取りあへず手向山紅葉の錦神のまにまに",k:"たび",a:"旅",b:"度"},
- {p:"このたびは幣も取りあへず【手向山】紅葉の錦神のまにまに",k:"手向山",a:"手向山",b:"手向く"},
- {p:"名にし負はば【あふ坂】山のさねかづら人に知られでくるよしもがな",k:"あふ坂",a:"逢坂",b:"逢ふ"},
- {p:"名にし負はばあふ坂山のさねかづら人に知られで【くる】よしもがな",k:"くる",a:"来る",b:"繰る"},
- {p:"みかの原【わきて】流るるいづみ川いつ見きとてか恋しかるらむ",k:"わきて",a:"湧きて",b:"分きて"},
- {p:"みかの原わきて流るる【いづみ】川いつ見きとてか恋しかるらむ",k:"いづみ",a:"泉川",b:"いつ見"},
- {p:"山里は冬ぞ寂しさまさりける人目も草も【かれ】ぬと思へば",k:"かれ",a:"枯れ",b:"離れ"},
- {p:"かくとだにえやは【いぶき】のさしも草さしも知らじな燃ゆる思ひを",k:"いぶき",a:"伊吹",b:"言ふ"},
- {p:"かくとだにえやはいぶきのさしも草さしも知らじな燃ゆる【思ひ】を",k:"思ひ",a:"思ひ",b:"火"},
- {p:"大江山【いく野】の道の遠ければまだふみもみず天の橋立",k:"いく野",a:"生野",b:"行く"},
- {p:"大江山いく野の道の遠ければまだ【ふみ】もみず天の橋立",k:"ふみ",a:"文",b:"踏み"},
- {p:"夜をこめて鳥のそら音ははかるともよに【あふ坂】の関はゆるさじ",k:"あふ坂",a:"逢坂",b:"逢ふ"},
- {p:"春の夜の夢ばかりなる手枕に【かひな】く立たむ名こそ惜しけれ",k:"かひな",a:"甲斐なし",b:"腕"}
+ {p:"わが庵は都のたつみしかぞ住む世をうぢ山と人はいふなり",
+  pairs:[{k:"うぢ", x:["宇治","宇治山"], y:["憂し","憂","憂き","うし","憂しと"]}]},
+ {p:"花の色はうつりにけりないたづらにわが身世にふるながめせしまに",
+  pairs:[{k:"ふる", x:["降る","降","降り"], y:["経る","経","古る"]},
+         {k:"ながめ", x:["長雨"], y:["眺め","眺","眺むる"]}]},
+ {p:"これやこの行くも帰るも別れては知るも知らぬもあふ坂の関",
+  pairs:[{k:"あふ坂", x:["逢坂","逢坂の関","逢坂山"], y:["逢ふ","逢う","会ふ","会う","逢"]}]},
+ {p:"みちのくのしのぶもぢずり誰ゆゑに乱れそめにしわれならなくに",
+  pairs:[{k:"そめ", x:["染め","染","染む"], y:["初め","初","初む"]}]},
+ {p:"立ち別れいなばの山の峰に生ふるまつとし聞かば今帰り来む",
+  pairs:[{k:"いなば", x:["因幡","因幡の山","因幡山"], y:["往なば","去なば","往ぬ","去ぬ"]},
+         {k:"まつ", x:["松"], y:["待つ","待"]}]},
+ {p:"わびぬれば今はた同じ難波なるみをつくしても逢はむとぞ思ふ",
+  pairs:[{k:"みをつくし", x:["澪標","澪つくし"], y:["身を尽くし","身を尽くす","身を尽くして"]}]},
+ {p:"吹くからに秋の草木のしをるればむべ山風をあらしといふらむ",
+  pairs:[{k:"あらし", x:["嵐"], y:["荒らし","荒し","荒らす"]}]},
+ {p:"このたびは幣も取りあへず手向山紅葉の錦神のまにまに",
+  pairs:[{k:"たび", x:["旅"], y:["度"]},
+         {k:"手向山", x:["手向山","山の名","地名"], y:["手向く","手向","手向け","手向ける"]}]},
+ {p:"名にし負はばあふ坂山のさねかづら人に知られでくるよしもがな",
+  pairs:[{k:"あふ坂", x:["逢坂","逢坂山"], y:["逢ふ","逢う","会ふ","会う"]},
+         {k:"くる", x:["来る","来"], y:["繰る","繰"]}]},
+ {p:"みかの原わきて流るるいづみ川いつ見きとてか恋しかるらむ",
+  pairs:[{k:"わきて", x:["湧きて","涌きて","湧く","湧き"], y:["分きて","別きて","分く","分き"]},
+         {k:"いづみ", x:["泉川","泉","和泉"], y:["いつ見","何時見","いつ見き"],
+          note:"「いづみ」と「いつ見」は同音の反復とみる立場もある。"}]},
+ {p:"山里は冬ぞ寂しさまさりける人目も草もかれぬと思へば",
+  pairs:[{k:"かれ", x:["枯れ","枯","枯る"], y:["離れ","離","離る","人離れ"]}]},
+ {p:"かくとだにえやはいぶきのさしも草さしも知らじな燃ゆる思ひを",
+  pairs:[{k:"いぶき", x:["伊吹","伊吹山"], y:["言ふ","言う","いふ","いう","息吹"]},
+         {k:"思ひ", x:["思ひ","思い","思"], y:["火","ひ"]}]},
+ {p:"大江山いく野の道の遠ければまだふみもみず天の橋立",
+  pairs:[{k:"いく野", x:["生野"], y:["行く","行"]},
+         {k:"ふみ", x:["文","手紙"], y:["踏み","踏む","踏"]}]},
+ {p:"夜をこめて鳥のそら音ははかるともよにあふ坂の関はゆるさじ",
+  pairs:[{k:"あふ坂", x:["逢坂","逢坂の関"], y:["逢ふ","逢う","会ふ","会う"]}]},
+ {p:"春の夜の夢ばかりなる手枕にかひなく立たむ名こそ惜しけれ",
+  pairs:[{k:"かひな", x:["甲斐なし","甲斐無し","甲斐なく","甲斐無く","かひなし","甲斐ない"], y:["腕"]}]}
 ];
 
 /* 枕詞：p=和歌（【】が枕詞）、ans=導いている語、d=同じ歌からの誤答 */
@@ -506,7 +528,7 @@ const HONKA = [
 /* 分野の定義 */
 const WAKA_SECTIONS = [
  {id:"kugire", name:"句切れ",   type:"kugire", data:KUGIRE, note:"切れ目をタップし、続けて根拠を選びます"},
- {id:"kake",   name:"掛詞",     type:"kake",   data:KAKE,   note:"掛けられた二つの意味を選びます"},
+ {id:"kake",   name:"掛詞",     type:"kake",   data:KAKE,   note:"掛詞の二つの意味を「○と○」の形で入力します"},
  {id:"makura", name:"枕詞",     type:"lead",   data:MAKURA, note:"枕詞が導いている語を選びます"},
  {id:"jo",     name:"序詞",     type:"jo",     data:JO,     note:"導いている語と、その判断基準を選びます"},
  {id:"engo",   name:"縁語",     type:"engo",   data:ENGO,   note:"中心語の縁語をすべて選びます"},
@@ -1800,13 +1822,15 @@ function renderWakaHome(){
   const best = loadBest();
   const cards = WAKA_SECTIONS.map(s => {
     const b = best[`waka-${s.id}`];
+    const pt = wakaPts(s);
     return `<button class="setcard" data-sec="${s.id}">
       <span class="no mincho">${s.name}</span>
-      <span class="range">全${s.data.length}問</span>
-      <span class="best">${b === undefined ? "" : `最高 ${b} / ${s.data.length}`}</span>
+      <span class="range">全${s.data.length}問${pt !== s.data.length ? `　${pt}組` : ""}</span>
+      <span class="best">${b === undefined ? "" : `最高 ${b} / ${pt}`}</span>
     </button>`;
   }).join("");
   const total = WAKA_SECTIONS.reduce((a,s) => a + s.data.length, 0);
+  const tpt = WAKA_SECTIONS.reduce((a,s) => a + wakaPts(s), 0);
   const eb = best["waka-exam"];
   stage.innerHTML = `
     <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
@@ -1814,9 +1838,9 @@ function renderWakaHome(){
       <button class="examcard" id="exam">
         <span style="display:flex;flex-direction:column;gap:1px;">
           <span class="t mincho">通しテスト</span>
-          <span class="d">全${total}問から20問を無作為抽出　18問以上で合格</span>
+          <span class="d">全${total}問（${tpt}点）から20問を無作為抽出　9割以上で合格</span>
         </span>
-        <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb} / ${EXAM_N}`}</span>
+        <span class="r">${eb === undefined ? "挑戦" : `最高 ${eb}`}</span>
       </button>
       <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
     </div>`;
@@ -1992,6 +2016,7 @@ function startJdExam(){
 }
 function vq(word){ return {t:"vocab", w:word}; }
 function wq(sec, item){ return {t:sec.type, d:item, sec:sec.name}; }
+function wakaPts(sec){ return sec.data.reduce((n,d) => n + (d.pairs ? d.pairs.length : 1), 0); }
 
 function newState(extra){
   clearTimer();
@@ -2166,25 +2191,68 @@ function rKugire(q){
   });
 }
 
-/* --- 掛詞 --- */
+/* --- 掛詞：傍線なし。「○と○」をキーボード入力（順序は問わない） --- */
+const KAZU = ["","一","二","三","四"];
+function kakeHit(list, v){ return v !== "" && list.some(x => normIn(x) === v); }
 function rKake(q){
-  const d = q.d;
-  const picked = []; const seen = new Set([d.a + d.b]);
-  shuffle(KAKE).forEach(x => {
-    if (picked.length < 3 && !seen.has(x.a + x.b)){ seen.add(x.a + x.b); picked.push(x); }
-  });
-  const opts = shuffle([d, ...picked]).map(x => ({v:x.a + "／" + x.b, h:`${esc(x.a)} と ${esc(x.b)}`}));
+  const d = q.d, n = d.pairs.length;
   stage.innerHTML = frame(`
     <div class="prompt">
-      <div class="label">傍線部の掛詞に掛けられた二つの意味は</div>
-      <p class="body">${mark(d.p,"hl")}</p>
+      <div class="label">この歌に用いられている掛詞を「○と○」の形で書く${n > 1 ? `（${KAZU[n]}組あります。順序は問いません）` : ""}</div>
+      <p class="body">${esc(d.p)}</p>
     </div>
-    ${group("main", opts)}`);
-  bindGroups(["main"]);
-  onSubmit(sel => {
-    const right = d.a + "／" + d.b;
-    paintGroup("main", right, sel.main);
-    finish(sel.main === right, `<span class="gloss"><b>${esc(d.k)}</b>　……　${esc(d.a)} と ${esc(d.b)}</span>`);
+    <div class="kakelist">
+      ${d.pairs.map((_,i) => `
+        <div class="kakerow">
+          <input class="iin" id="x${i}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" aria-label="${i+1}組目の意味その一">
+          <span class="to mincho">と</span>
+          <input class="iin" id="y${i}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" aria-label="${i+1}組目の意味その二">
+          <span class="fb" id="kf${i}"></span>
+        </div>`).join("")}
+    </div>`);
+  const ins = [...stage.querySelectorAll(".kakerow .iin")];
+  const sub = document.getElementById("submit");
+  sub.disabled = false;
+  const tally = () => {
+    const m = ins.filter(x => x.value.trim() === "").length;
+    sub.textContent = m ? `解答する（未記入 ${m}）` : "解答する";
+  };
+  tally();
+  ins.forEach((x,i) => {
+    x.addEventListener("input", tally);
+    x.addEventListener("keydown", e => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        if (i < ins.length - 1) ins[i+1].focus();
+        else { x.blur(); sub.click(); }
+      }
+    });
+  });
+  ins[0].focus();
+  onSubmit(() => {
+    const left = d.pairs.slice();
+    let got = 0, fb = "";
+    d.pairs.forEach((_,i) => {
+      const xi = document.getElementById("x" + i), yi = document.getElementById("y" + i);
+      const a = normIn(xi.value), b = normIn(yi.value);
+      const hit = left.findIndex(p => (kakeHit(p.x, a) && kakeHit(p.y, b)) || (kakeHit(p.y, a) && kakeHit(p.x, b)));
+      const ok = hit >= 0;
+      if (ok){ got++; left.splice(hit,1); }
+      [xi,yi].forEach(el => {
+        el.disabled = true;
+        el.classList.add(ok ? "in-ok" : "in-ng");
+        if (el.value.trim() === "") el.value = "未記入";
+      });
+      document.getElementById("kf" + i).innerHTML = ok
+        ? '<span class="mk ok">○</span>' : '<span class="mk ng">×</span>';
+    });
+    d.pairs.forEach(p => {
+      fb += `<span class="gloss"><b>${esc(p.k)}</b>　……　${esc(p.x[0])} と ${esc(p.y[0])}</span>`;
+      if (p.note) fb += `<span class="note">※${esc(p.note)}</span>`;
+    });
+    finish(got === n, fb, got, n);
   });
 }
 
@@ -2545,7 +2613,7 @@ function missLabel(q){
   if (q.t === "kijun") return {w:`${q.u.name}　識別基準`, m:q.u.meanings.map(m => m.n + "＝" + m.k).join("／")};
   const d = q.d;
   if (q.t === "kugire") return {w:KUGIRE_NAME[d.at] + "　" + d.m, m:d.k.join("　")};
-  if (q.t === "kake")   return {w:d.k + "　……　" + d.a + " と " + d.b, m:stripMark(d.p)};
+  if (q.t === "kake")   return {w:d.pairs.map(p => `${p.k}＝${p.x[0]}と${p.y[0]}`).join("　"), m:d.p};
   if (q.t === "lead")   return {w:d.ans, m:stripMark(d.p)};
   if (q.t === "jo")     return {w:d.ans + "　／　" + d.m, m:stripMark(d.p)};
   if (q.t === "engo")   return {w:d.c + "　……　" + d.e.join("・"), m:d.p};
