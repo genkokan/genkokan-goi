@@ -277,11 +277,11 @@
   .score .n{font-family:"Shippori Mincho",serif; font-size:44px; font-weight:700; line-height:1.2; font-variant-numeric:tabular-nums;}
   .score .n small{font-size:18px; color:var(--ink-faint); font-weight:500;}
   .score .caption{font-size:12.5px; color:var(--ink-soft); letter-spacing:.06em;}
-  .hktable{grid-template-columns:max-content repeat(3,minmax(4.2em,7.5em)) !important;}
+  .hktable{grid-template-columns:max-content repeat(2,minmax(6em,9em)) !important;}
   .hktable .cv + .cv{border-left:1px solid var(--rule);}
   .hktable .ck{font-size:15px;}
   @media (max-width:520px){
-    .hktable{grid-template-columns:max-content repeat(3,minmax(0,1fr)) !important; width:100%;}
+    .hktable{grid-template-columns:max-content repeat(2,minmax(0,1fr)) !important; width:100%;}
     .hktable .cv{padding:3px 3px; gap:2px;}
     .hktable .ck{padding:8px 6px; font-size:14px;}
     .hktable .cin{font-size:16px;}
@@ -1892,7 +1892,7 @@ const HK_SECS = [
   {name:"51〜100番　全首", from:51, to:100}
 ];
 function hkPoems(s){ return HK.filter(h => h.n >= s.from && h.n <= s.to); }
-function hkPts(s){ return hkPoems(s).reduce((n,h) => n + h.w.length*3, 0); }
+function hkPts(s){ return hkPoems(s).reduce((n,h) => n + h.w.length*2, 0); }
 
 /* ==================== 文法の基礎・敬語 ==================== */
 /* 文法の基礎・敬語：現古館プリントより　no＝大問番号　【】＝傍線部 */
@@ -2055,7 +2055,7 @@ function renderHome(){
       </button>
       <button class="gate" data-go="hyaku">
         <span class="t mincho">51〜100用言</span>
-        <span class="d">百人一首 51〜100番の用言の品詞・活用の行・活用形</span>
+        <span class="d">百人一首 51〜100番の用言の活用の種類・活用形</span>
         <span class="n">打ち込み式　全${HK.length}首・${HK.reduce((n,h) => n + h.w.length, 0)}語</span>
       </button>
       <button class="gate" data-go="jodo">
@@ -2288,18 +2288,27 @@ function startKgSec(gi){
 }
 /* --- 百人一首の用言：品詞・活用の行・活用形を打ち込む --- */
 const MARU = ["①","②","③","④","⑤","⑥","⑦","⑧","⑨"];
-const HIN_ACC = {"動詞":["動詞","動"], "形容詞":["形容詞","形"], "形容動詞":["形容動詞","形動"]};
-function hkGyoOk(w, val){
-  const v = normIn(val);
-  if (w[3] === "") return v === "" || NONE.includes(String(val).trim()) || NONE.map(normIn).includes(v);
-  const k = normIn(w[3]);
-  return v === k + "行" || v === k;
+/* 活用の種類：「カ四」「カ行四段」「カ行四段活用」「カ変」「ク」「ク活用」などを正解にする */
+const KIND_SHORT = {"四段":"四","上一段":"上一","上二段":"上二","下一段":"下一","下二段":"下二"};
+function hkKindAcc(w){
+  const k = w[5], G = w[3], acc = [];
+  if (w[2] !== "動詞"){                       // ク活用・シク活用・ナリ活用・タリ活用
+    const b = k.replace("活用","");
+    acc.push(b, b + "活用", (w[2] === "形容詞" ? "形" : "形動") + b);
+  } else if (/変格/.test(k)){                 // カ行変格 など
+    acc.push(G + "変", G + "変格", G + "行変格", G + "行変格活用", G + "変格活用");
+  } else {
+    const sh = KIND_SHORT[k];
+    [G, G + "行"].forEach(pre => [sh, k, k + "活用"].forEach(b => acc.push(pre + b)));
+  }
+  return acc.map(normIn);
 }
+function hkKindOk(w, val){ return hkKindAcc(w).includes(normIn(val)); }
+const KEI_ABBR = {"未然形":"未","連用形":"用","終止形":"止","連体形":"体","已然形":"已","命令形":"命"};
 function hkKeiOk(w, val){
-  const v = normIn(val);
-  return v === w[4] || v === w[4].replace("形","");
+  const v = normIn(val), k = w[4];
+  return [k, k.replace("形",""), KEI_ABBR[k]].includes(v);
 }
-function hkHinOk(w, val){ return HIN_ACC[w[2]].includes(normIn(val)); }
 function hkLine(w, k){
   const kind = w[2] === "動詞" ? (/変格/.test(w[5]) ? `${w[5]}活用` : `${w[3]}行${w[5]}活用`)
                                : `${w[5]}`;
@@ -2314,20 +2323,20 @@ function rHk(q){
   const cells = [];   // {id, ok}
   const rows = h.w.map((w,k) => {
     const last = k === h.w.length - 1 ? " last" : "";
-    const ids = ["h"+k, "g"+k, "k"+k];
-    cells.push({id:ids[0], ok:v => hkHinOk(w,v)}, {id:ids[1], ok:v => hkGyoOk(w,v)}, {id:ids[2], ok:v => hkKeiOk(w,v)});
+    const ids = ["g"+k, "k"+k];
+    cells.push({id:ids[0], ok:v => hkKindOk(w,v)}, {id:ids[1], ok:v => hkKeiOk(w,v)});
     const inp = (id, lab) => `<div class="cv${last}"><input class="cin" id="${id}" type="text" aria-label="${MARU[k]}${esc(w[0])} ${lab}"
         autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><span class="fb" id="f${id}"></span></div>`;
-    return `<div class="ck mincho${last}">${MARU[k]}${esc(w[0])}</div>${inp(ids[0],"品詞")}${inp(ids[1],"活用の行")}${inp(ids[2],"活用形")}`;
+    return `<div class="ck mincho${last}">${MARU[k]}${esc(w[0])}</div>${inp(ids[0],"活用の種類")}${inp(ids[1],"活用形")}`;
   }).join("");
   stage.innerHTML = frame(`
     <div class="prompt">
       <div class="src">${h.n}番　${esc(h.a)}</div>
       <p class="body long">${hkPoemHtml(h)}</p>
-      <div class="label" style="margin-top:14px;">傍線部の用言の品詞・活用の行・活用形を打ち込む</div>
-      <div class="hint">品詞は「動詞・形容詞・形容動詞」（「動・形・形動」でも可）。行は「カ行」または「カ」。形容詞・形容動詞の行は ○。活用形は「連用形」または「連用」。</div>
+      <div class="label" style="margin-top:14px;">傍線部の用言の活用の種類と活用形を打ち込む</div>
+      <div class="hint">活用の種類は「カ四」「カ行四段」「カ変」「ク」「ナリ」など。活用形は「未」「未然」「未然形」のいずれでも可。</div>
       <div class="conjtable hktable">
-        <div class="hd"></div><div class="hd">品詞</div><div class="hd">活用の行</div><div class="hd">活用形</div>
+        <div class="hd"></div><div class="hd">活用の種類</div><div class="hd">活用形</div>
         ${rows}
       </div>
     </div>`);
@@ -2381,7 +2390,7 @@ function renderHkHome(){
   }).join("");
   stage.innerHTML = `
     <div class="fade" style="display:flex;flex-direction:column;gap:18px;">
-      <div class="sectitle">傍線部の用言の品詞・活用の行・活用形を打ち込む（歌の順はランダム）</div>
+      <div class="sectitle">傍線部の用言の活用の種類と活用形を打ち込む（歌の順はランダム）</div>
       <div class="setgrid">${cards}</div>
       <div class="actions"><button class="btn" id="tohome">トップへ戻る</button></div>
     </div>`;
@@ -3030,7 +3039,7 @@ function missLabel(q){
   if (q.t === "vocab") return {w:q.w.w, m:q.w.m};
   if (q.t === "conj")  return {w:`${q.u.name}　活用表`, m:KEI6.map((k,i) => k.replace("形","") + "：" +
       (q.u.conj2 ? showAcc(q.u.conj2[i][1]) + "／" + showAcc(q.u.conj2[i][0]) : showAcc(q.u.conj[i]))).join("　")};
-  if (q.t === "hk")    return {w:`${q.h.n}番　${q.h.a}`, m:q.h.w.map((w,k) => `${MARU[k]}${w[0]}：${w[2]}・${w[3] ? w[3]+"行" : "○"}・${w[4]}`).join("　")};
+  if (q.t === "hk")    return {w:`${q.h.n}番　${q.h.a}`, m:q.h.w.map((w,k) => `${MARU[k]}${w[0]}：${w[2] === "動詞" ? (/変格/.test(w[5]) ? w[5] : w[3]+"行"+w[5]) : w[5]}・${w[4]}`).join("　")};
   if (q.t === "imi")   return {w:`${q.u.name}　意味`, m:q.u.meanings.map(m => m.n).join("・")};
   if (q.t === "kijun") return {w:`${q.u.name}　識別基準`, m:q.u.meanings.map(m => m.n + "＝" + m.k).join("／")};
   const d = q.d;
